@@ -43,7 +43,7 @@ The module supports the following configuration options:
 | `patientIdIdentifierTypeUuid` | `UUID` | `05a29f94-c0ed-11e2-94be-8c13b969e334` (OpenMRS ID) | Identifier type shown in the `patientId` column. Only needed if `patientId` is included in `labTableColumns` |
 | `usePreferredPatientIdentifier` | `boolean` | `true` | When `true`, the `patientId` column only shows an identifier that is both preferred and of the configured type. When `false`, any identifier of the configured type is shown, falling back to the patient's preferred identifier of any type |
 | `enableReviewingLabResultsBeforeApproval` | `boolean` | `false` | Adds a review step. Shows the *Pending review* tab and tile and the approve/amend actions, so results are held for review before being finalised |
-
+| `filterByCurrentLocation` | `boolean` | `false` | Enable filtering lab requests by current location |
 Example:
 
 ```json

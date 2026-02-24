@@ -35,6 +35,11 @@ export const configSchema = {
     _description:
       'Enable reviewing lab results before final approval. When enabled, lab results will be submitted for review before being approved and finalized.',
   },
+  filterByCurrentLocation: {
+    _type: Type.Boolean,
+    _default: false,
+    _description: 'Enable filtering lab requests by current location',
+  },
 };
 
 export type Config = {
@@ -43,4 +48,5 @@ export type Config = {
   labTableColumns: Array<LabTableColumnName>;
   patientIdIdentifierTypeUuid: string;
   usePreferredPatientIdentifier: boolean;
+  filterByCurrentLocation: boolean;
 };
