@@ -12,6 +12,64 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ampath/esm-laboratory-app@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@ampath/esm-laboratory-app@workspace:."
+  dependencies:
+    "@carbon/react": "npm:^1.83.0"
+    "@openmrs/esm-framework": "npm:next"
+    "@playwright/test": "npm:^1.52.0"
+    "@swc/cli": "npm:^0.1.62"
+    "@swc/core": "npm:^1.3.62"
+    "@swc/jest": "npm:^0.2.26"
+    "@testing-library/dom": "npm:^8.20.0"
+    "@testing-library/jest-dom": "npm:^5.16.5"
+    "@testing-library/react": "npm:^16.3.2"
+    "@testing-library/user-event": "npm:^14.4.3"
+    "@types/dotenv": "npm:^8.2.3"
+    "@types/jest": "npm:^28.1.8"
+    "@types/react": "npm:^18.3.21"
+    "@types/react-dom": "npm:^18.3.0"
+    "@types/webpack-env": "npm:^1.18.1"
+    "@typescript-eslint/eslint-plugin": "npm:^8.45.0"
+    "@typescript-eslint/parser": "npm:^8.45.0"
+    css-loader: "npm:^6.8.1"
+    dayjs: "npm:^1.11.11"
+    eslint: "npm:^8.57.0"
+    eslint-plugin-import: "npm:^2.31.0"
+    eslint-plugin-react-hooks: "npm:^5.0.0"
+    file-saver: "npm:^2.0.5"
+    husky: "npm:^8.0.0"
+    i18next-parser: "npm:^9.3.0"
+    identity-obj-proxy: "npm:^3.0.0"
+    jest: "npm:^28.1.3"
+    jest-cli: "npm:^28.1.3"
+    jest-environment-jsdom: "npm:^28.1.3"
+    lint-staged: "npm:^14.0.1"
+    lodash-es: "npm:^4.17.21"
+    openmrs: "npm:next"
+    prettier: "npm:^2.8.8"
+    pretty-quick: "npm:^3.1.3"
+    raw-loader: "npm:^4.0.2"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    react-hook-form: "npm:^7.52.1"
+    react-i18next: "npm:^16.0.0"
+    react-router-dom: "npm:^6.11.2"
+    swc-loader: "npm:^0.2.3"
+    turbo: "npm:^2.5.2"
+    typescript: "npm:^5.0.0"
+    webpack: "npm:5.99.9"
+    webpack-cli: "npm:^6.0.1"
+  peerDependencies:
+    "@openmrs/esm-framework": 9.x
+    dayjs: 1.x
+    react: 18.x
+    react-i18next: 16.x
+    react-router-dom: 6.x
+  languageName: unknown
+  linkType: soft
+
 "@apideck/better-ajv-errors@npm:^0.3.1":
   version: 0.3.6
   resolution: "@apideck/better-ajv-errors@npm:0.3.6"
@@ -3564,64 +3622,6 @@ __metadata:
   checksum: 10/72679ac0b87e39cbcf825dd359da9849795a80e7cd775acbead2795e455e3fe7a6cee75561bf7646fa406c0bab0ff894362f5a0b2c76e40809585d1aa6095604
   languageName: node
   linkType: hard
-
-"@openmrs/esm-laboratory-app@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "@openmrs/esm-laboratory-app@workspace:."
-  dependencies:
-    "@carbon/react": "npm:^1.83.0"
-    "@openmrs/esm-framework": "npm:next"
-    "@playwright/test": "npm:^1.52.0"
-    "@swc/cli": "npm:^0.1.62"
-    "@swc/core": "npm:^1.3.62"
-    "@swc/jest": "npm:^0.2.26"
-    "@testing-library/dom": "npm:^8.20.0"
-    "@testing-library/jest-dom": "npm:^5.16.5"
-    "@testing-library/react": "npm:^16.3.2"
-    "@testing-library/user-event": "npm:^14.4.3"
-    "@types/dotenv": "npm:^8.2.3"
-    "@types/jest": "npm:^28.1.8"
-    "@types/react": "npm:^18.3.21"
-    "@types/react-dom": "npm:^18.3.0"
-    "@types/webpack-env": "npm:^1.18.1"
-    "@typescript-eslint/eslint-plugin": "npm:^8.45.0"
-    "@typescript-eslint/parser": "npm:^8.45.0"
-    css-loader: "npm:^6.8.1"
-    dayjs: "npm:^1.11.11"
-    eslint: "npm:^8.57.0"
-    eslint-plugin-import: "npm:^2.31.0"
-    eslint-plugin-react-hooks: "npm:^5.0.0"
-    file-saver: "npm:^2.0.5"
-    husky: "npm:^8.0.0"
-    i18next-parser: "npm:^9.3.0"
-    identity-obj-proxy: "npm:^3.0.0"
-    jest: "npm:^28.1.3"
-    jest-cli: "npm:^28.1.3"
-    jest-environment-jsdom: "npm:^28.1.3"
-    lint-staged: "npm:^14.0.1"
-    lodash-es: "npm:^4.17.21"
-    openmrs: "npm:next"
-    prettier: "npm:^2.8.8"
-    pretty-quick: "npm:^3.1.3"
-    raw-loader: "npm:^4.0.2"
-    react: "npm:^18.3.1"
-    react-dom: "npm:^18.3.1"
-    react-hook-form: "npm:^7.52.1"
-    react-i18next: "npm:^16.0.0"
-    react-router-dom: "npm:^6.11.2"
-    swc-loader: "npm:^0.2.3"
-    turbo: "npm:^2.5.2"
-    typescript: "npm:^5.0.0"
-    webpack: "npm:5.99.9"
-    webpack-cli: "npm:^6.0.1"
-  peerDependencies:
-    "@openmrs/esm-framework": 9.x
-    dayjs: 1.x
-    react: 18.x
-    react-i18next: 16.x
-    react-router-dom: 6.x
-  languageName: unknown
-  linkType: soft
 
 "@openmrs/esm-navigation@npm:9.0.1-pre.4001":
   version: 9.0.1-pre.4001
