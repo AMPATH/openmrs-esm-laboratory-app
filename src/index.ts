@@ -118,6 +118,11 @@ export const amendLabResultsAction = getAsyncLifecycle(
   options,
 );
 
+export const generateBillRequestAction = getAsyncLifecycle(
+  () => import('./lab-tabs/actions/generate-bill-request-action.component'),
+  options,
+);
+
 export function startupApp() {
   defineConfigSchema(moduleName, configSchema);
 }
