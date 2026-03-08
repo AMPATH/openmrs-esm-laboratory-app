@@ -152,6 +152,11 @@
       "name": "add-lab-request-results-action",
       "component": "addLabRequestResultsAction",
       "slot": "inprogress-tests-actions-slot"
+    },
+    {
+      "name": "generate-bill-request-action",
+      "component": "generateBillRequestAction",
+      "slot": "tests-ordered-actions-slot"
     }
   ],
   "workspaces2": [

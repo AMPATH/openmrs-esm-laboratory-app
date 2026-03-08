@@ -6,7 +6,7 @@ type LabTableColumnName = (typeof allowedLabTableColumns)[number];
 export const configSchema = {
   laboratoryOrderTypeUuid: {
     _type: Type.String,
-    _default: '52a447d3-a64a-11e3-9aeb-50e549534c5e',
+    _default: '53eb4768-1359-11df-a1f1-0026b9348838',
     _description: 'UUID for orderType',
   },
   labTableColumns: {
@@ -34,6 +34,11 @@ export const configSchema = {
     _default: false,
     _description: 'Enable filtering lab requests by current location',
   },
+  laboratoryServiceTypedUuid: {
+    _type: Type.UUID,
+    _default: '5adeb9de-5545-4272-add4-a661005f727e',
+    _description: 'Laboratory billable service type',
+  },
 };
 
 export type Config = {
@@ -42,4 +47,5 @@ export type Config = {
   labTableColumns: Array<LabTableColumnName>;
   patientIdIdentifierTypeUuid: string;
   filterByCurrentLocation: boolean;
+  laboratoryServiceTypedUuid: string;
 };

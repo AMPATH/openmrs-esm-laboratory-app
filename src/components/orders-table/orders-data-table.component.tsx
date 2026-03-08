@@ -304,6 +304,7 @@ const OrdersDataTable: React.FC<OrdersDataTableProps> = (props) => {
                     <TableExpandedRow colSpan={headers.length + 2}>
                       <ListOrderDetails
                         groupedOrders={groupedOrdersByPatient.find((item) => item.patientUuid === row.id)}
+                        patientUuid={row.id}
                       />
                     </TableExpandedRow>
                   ) : (

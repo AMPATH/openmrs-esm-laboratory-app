@@ -13,6 +13,8 @@ import { capitalize } from 'lodash-es';
 import { ExtensionSlot, formatDate, parseDate } from '@openmrs/esm-framework';
 import { type GroupedOrders } from '../../types';
 import styles from './list-order-details.scss';
+import { useBills } from '../../bill/bill.resource';
+import OrderedActionsExtensionSlot from './ordered-actions-extension-slot/ordered-actions-extension-slot';
 
 type OrderDetailsRowProps = {
   label: ReactNode;
@@ -21,6 +23,7 @@ type OrderDetailsRowProps = {
 
 export interface ListOrdersDetailsProps {
   groupedOrders: GroupedOrders;
+  patientUuid: string;
 }
 
 const OrderDetailRow = ({ label, value }: OrderDetailsRowProps) => {
@@ -35,9 +38,10 @@ const OrderDetailRow = ({ label, value }: OrderDetailsRowProps) => {
     </StructuredListRow>
   );
 };
-const ListOrderDetails: React.FC<ListOrdersDetailsProps> = ({ groupedOrders }) => {
+const ListOrderDetails: React.FC<ListOrdersDetailsProps> = ({ groupedOrders, patientUuid }) => {
   const { t } = useTranslation();
   const originalOrders = groupedOrders?.originalOrders ?? [];
+  const { bills, isLoading } = useBills(patientUuid);
 
   return (
     <div>
@@ -103,7 +107,7 @@ const ListOrderDetails: React.FC<ListOrdersDetailsProps> = ({ groupedOrders }) =
               <>
                 <div className={styles.testsOrderedActions}>
                   <ExtensionSlot state={{ order: order }} name="rejected-ordered-actions-slot" />
-                  <ExtensionSlot state={{ order: order }} name="tests-ordered-actions-slot" />
+                  <OrderedActionsExtensionSlot order={order} bills={bills} isLoading={isLoading} />
                   <ExtensionSlot state={{ order: order }} name="add-lab-order-details-slot" />
                 </div>
               </>
