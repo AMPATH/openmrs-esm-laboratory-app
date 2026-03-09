@@ -56,6 +56,12 @@ const labTableColumnSpec = {
     headerLabelDefault: 'Sex',
     key: 'patientSex',
   },
+  priority: {
+    // t('priority', 'Priority')
+    headerLabelKey: 'priority',
+    headerLabelDefault: 'Priority',
+    key: 'priority',
+  },
   totalOrders: {
     // t('totalOrders', 'Total Orders')
     headerLabelKey: 'totalOrders',
@@ -95,7 +101,7 @@ const OrdersDataTable: React.FC<OrdersDataTableProps> = (props) => {
     status: props.useFilter ? filter : props.fulfillerStatus,
     newOrdersOnly: props.newOrdersOnly,
     excludeCanceled: props.excludeCanceledAndDiscontinuedOrders,
-    includePatientId: labTableColumns.includes('patientId'),
+    includePatientId: true,
   });
 
   const flattenedLabOrders: Array<FlattenedOrder> = useMemo(() => {
@@ -125,13 +131,16 @@ const OrdersDataTable: React.FC<OrdersDataTableProps> = (props) => {
         const labOrdersForPatient = labOrders.filter((order) => order.patient.uuid === patientUuid);
         const patient = labOrdersForPatient[0]?.patient;
         const flattenedLabOrdersForPatient = flattenedLabOrders.filter((order) => order.patientUuid === patientUuid);
+
         return {
-          patientId: patient?.identifiers?.find(
-            (identifier) =>
-              identifier.preferred &&
-              !identifier.voided &&
-              identifier.identifierType.uuid === patientIdIdentifierTypeUuid,
-          )?.identifier,
+          patientId: patient?.identifiers
+            ?.filter((identifier) =>
+              identifier.preferred && !identifier.voided && patientIdIdentifierTypeUuid
+                ? patientIdIdentifierTypeUuid.includes(identifier.identifierType.uuid)
+                : true,
+            )
+            ?.map((identifier) => identifier.identifier)
+            ?.join(','),
           patientUuid: patientUuid,
           patientName: patient?.person?.display,
           patientAge: patient?.person?.age,
@@ -140,6 +149,7 @@ const OrdersDataTable: React.FC<OrdersDataTableProps> = (props) => {
           totalOrders: flattenedLabOrdersForPatient.length,
           orders: flattenedLabOrdersForPatient,
           originalOrders: labOrdersForPatient,
+          priority: flattenedLabOrders[0].urgency,
         };
       });
     } else {
@@ -155,7 +165,8 @@ const OrdersDataTable: React.FC<OrdersDataTableProps> = (props) => {
         (orderGroup) =>
           (labTableColumns.includes('name') && orderGroup.patientName?.toLowerCase().includes(lowerSearchString)) ||
           (labTableColumns.includes('patientId') && orderGroup.patientId?.toLowerCase().includes(lowerSearchString)) ||
-          orderGroup.orders.some((order) => order.orderNumber?.toLowerCase().includes(lowerSearchString)),
+          orderGroup.orders.some((order) => order.orderNumber?.toLowerCase().includes(lowerSearchString)) ||
+          orderGroup.patientId?.toLowerCase().includes(lowerSearchString),
       );
     }
 

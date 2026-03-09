@@ -26,7 +26,7 @@ The module supports the following configuration options:
 | --- | --- | --- | --- |
 | `laboratoryOrderTypeUuid` | `string` | `52a447d3-a64a-11e3-9aeb-50e549534c5e` | UUID for the laboratory order type |
 | `labTableColumns` | `Array<string>` | `['name', 'age', 'sex', 'totalOrders', 'action']` | Columns to display in the lab table. Allowed values: `name`, `age`, `dob`, `sex`, `totalOrders`, `action`, `patientId` |
-| `patientIdIdentifierTypeUuid` | `UUID` | `05a29f94-c0ed-11e2-94be-8c13b969e334` | Identifier type UUID for the patient ID column. Only needed if `patientId` is included in `labTableColumns` |
+| `patientIdIdentifierTypeUuid` | `Array<string>` | `['05a29f94-c0ed-11e2-94be-8c13b969e334']` | Identifier type UUID for the patient ID column. Only needed if `patientId` is included in `labTableColumns` |
 | `enableReviewingLabResultsBeforeApproval` | `boolean` | `false` | When enabled, lab results are submitted for review before being approved and finalized |
 | `filterByCurrentLocation` | `boolean` | `false` | Enable filtering lab requests by current location |
 

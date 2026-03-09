@@ -1,6 +1,6 @@
 import { Type, validators } from '@openmrs/esm-framework';
 
-const allowedLabTableColumns = ['name', 'age', 'dob', 'sex', 'totalOrders', 'action', 'patientId'] as const;
+const allowedLabTableColumns = ['name', 'age', 'dob', 'sex', 'totalOrders', 'action', 'patientId', 'priority'] as const;
 type LabTableColumnName = (typeof allowedLabTableColumns)[number];
 
 export const configSchema = {
@@ -11,7 +11,7 @@ export const configSchema = {
   },
   labTableColumns: {
     _type: Type.Array,
-    _default: ['name', 'age', 'sex', 'totalOrders', 'action'] as Array<LabTableColumnName>,
+    _default: ['name', 'age', 'sex', 'priority', 'totalOrders', 'action'] as Array<LabTableColumnName>,
     _description: 'The columns to display in the lab table. Allowed values: ' + allowedLabTableColumns.join(', '),
     _elements: {
       _type: Type.String,
@@ -19,8 +19,8 @@ export const configSchema = {
     },
   },
   patientIdIdentifierTypeUuid: {
-    _type: Type.UUID,
-    _default: '05a29f94-c0ed-11e2-94be-8c13b969e334',
+    _type: Type.Array,
+    _default: [],
     _description: 'Needed if the "id" column of "labTableColumns" is used. Is the OpenMRS ID by default.',
   },
   enableReviewingLabResultsBeforeApproval: {
@@ -45,7 +45,7 @@ export type Config = {
   enableReviewingLabResultsBeforeApproval: boolean;
   laboratoryOrderTypeUuid: string;
   labTableColumns: Array<LabTableColumnName>;
-  patientIdIdentifierTypeUuid: string;
+  patientIdIdentifierTypeUuid: Array<string>;
   filterByCurrentLocation: boolean;
   laboratoryServiceTypedUuid: string;
 };
