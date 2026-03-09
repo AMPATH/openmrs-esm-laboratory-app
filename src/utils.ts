@@ -29,19 +29,18 @@ export function formatUrgencyLabel(
 
 export const getPatientIdentifier = (
   patient: Patient | undefined,
-  patientIdIdentifierTypeUuid: string,
+  patientIdIdentifierTypeUuid: Array<string>,
   usePreferredPatientIdentifier: boolean,
 ) => {
   if (usePreferredPatientIdentifier) {
-    // Default/old behavior: identifier must be both preferred and match the configured type.
-    return (
-      patient?.identifiers?.find(
-        (identifier) =>
-          identifier.preferred &&
-          !identifier.voided &&
-          identifier?.identifierType?.uuid === patientIdIdentifierTypeUuid,
-      )?.identifier ?? '--'
-    );
+    return patient?.identifiers
+      ?.filter((identifier) =>
+        identifier.preferred && !identifier.voided && patientIdIdentifierTypeUuid
+          ? patientIdIdentifierTypeUuid.includes(identifier.identifierType.uuid)
+          : true,
+      )
+      ?.map((identifier) => identifier.identifier)
+      ?.join(',');
   }
 
   // Opt-in behavior: first match identifiers by the configured type, regardless of the preferred flag.

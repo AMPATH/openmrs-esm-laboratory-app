@@ -396,7 +396,7 @@ describe('OrdersDataTable', () => {
     mockUseConfig.mockReturnValue({
       ...getDefaultsFromConfigSchema(configSchema),
       labTableColumns: ['patientId', 'age', 'totalOrders'],
-      patientIdIdentifierTypeUuid: 'identifier-type-uuid-1',
+      patientIdIdentifierTypeUuid: ['identifier-type-uuid-1'],
     });
     render(<OrdersDataTable />);
     const rows = screen.getAllByRole('row');

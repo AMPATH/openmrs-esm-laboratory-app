@@ -65,6 +65,12 @@ const labTableColumnSpec = {
     headerLabelDefault: 'Urgency',
     key: 'urgency',
   },
+  priority: {
+    // t('priority', 'Priority')
+    headerLabelKey: 'priority',
+    headerLabelDefault: 'Priority',
+    key: 'priority',
+  },
   totalOrders: {
     // t('totalOrders', 'Total Orders')
     headerLabelKey: 'totalOrders',
@@ -104,7 +110,7 @@ const OrdersDataTable: React.FC<OrdersDataTableProps> = (props) => {
     status: props.useFilter ? filter : props.fulfillerStatus,
     unpickedOrdersOnly: props.unpickedOrdersOnly,
     excludeCanceled: props.excludeCanceledAndDiscontinuedOrders,
-    includePatientId: labTableColumns.includes('patientId'),
+    includePatientId: true,
   });
 
   const flattenedLabOrders: Array<FlattenedOrder> = useMemo(() => {
@@ -154,6 +160,7 @@ const OrdersDataTable: React.FC<OrdersDataTableProps> = (props) => {
           orders: flattenedLabOrdersForPatient,
           originalOrders: labOrdersForPatient,
           urgencyCounts,
+          priority: flattenedLabOrders[0].urgency,
         };
       });
     } else {
@@ -168,7 +175,8 @@ const OrdersDataTable: React.FC<OrdersDataTableProps> = (props) => {
         (orderGroup) =>
           (labTableColumns.includes('name') && orderGroup.patientName?.toLowerCase().includes(lowerSearchString)) ||
           (labTableColumns.includes('patientId') && orderGroup.patientId?.toLowerCase().includes(lowerSearchString)) ||
-          orderGroup.orders.some((order) => order.orderNumber?.toLowerCase().includes(lowerSearchString)),
+          orderGroup.orders.some((order) => order.orderNumber?.toLowerCase().includes(lowerSearchString)) ||
+          orderGroup.patientId?.toLowerCase().includes(lowerSearchString),
       );
     }
 
