@@ -10,7 +10,7 @@ interface PickLabRequestActionMenuProps {
   billStatus: BillStatus;
 }
 
-const PickupLabRequestAction: React.FC<PickLabRequestActionMenuProps> = ({ order, billStatus = 'COMPLETED' }) => {
+const PickupLabRequestAction: React.FC<PickLabRequestActionMenuProps> = ({ order, billStatus = 'PAID' }) => {
   const { t } = useTranslation();
   const unsupportedStatuses = ['COMPLETED', 'DECLINED', 'IN_PROGRESS', 'ON_HOLD'];
 
@@ -21,7 +21,7 @@ const PickupLabRequestAction: React.FC<PickLabRequestActionMenuProps> = ({ order
     });
   }, [order]);
 
-  return billStatus === 'PAID' ? (
+  return billStatus === 'PAID' || billStatus === 'POSTED' ? (
     <Button
       className={styles.actionButton}
       disabled={unsupportedStatuses.includes(order.fulfillerStatus)}

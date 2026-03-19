@@ -39,7 +39,7 @@ export type DateFilterContext = {
   setDateRange: React.Dispatch<React.SetStateAction<[Date, Date] | null>>;
 };
 
-export type BillStatus = 'BLANK' | 'PENDING' | 'PAID';
+export type BillStatus = 'BLANK' | 'PENDING' | 'PAID' | 'POSTED';
 
 export interface LineItem {
   uuid: string;
