@@ -11,7 +11,7 @@ export const configSchema = {
   },
   labTableColumns: {
     _type: Type.Array,
-    _default: ['name', 'age', 'sex', 'priority', 'totalOrders', 'action'] as Array<LabTableColumnName>,
+    _default: ['name', 'age', 'sex', 'patientId', 'priority', 'totalOrders', 'action'] as Array<LabTableColumnName>,
     _description: 'The columns to display in the lab table. Allowed values: ' + allowedLabTableColumns.join(', '),
     _elements: {
       _type: Type.String,
