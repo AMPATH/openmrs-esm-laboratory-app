@@ -1,8 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, ModalBody, ModalFooter, ModalHeader } from '@carbon/react';
-import { ExtensionSlot, showNotification, showSnackbar, useAbortController, type Order } from '@openmrs/esm-framework';
+import {
+  type Config,
+  ExtensionSlot,
+  showNotification,
+  showSnackbar,
+  useAbortController,
+  useConfig,
+  type Order,
+} from '@openmrs/esm-framework';
 import { useTranslation } from 'react-i18next';
-import { setFulfillerStatus, useInvalidateLabOrders } from '../../laboratory.resource';
+import {
+  setFulfillerStatus,
+  updateObservationAndOrder,
+  useInvalidateLabOrders,
+  useMappedLabConcepts,
+} from '../../laboratory.resource';
 
 interface ApproveLabResultsModal {
   closeModal: () => void;
@@ -14,31 +27,56 @@ const ApproveLabResultsModal: React.FC<ApproveLabResultsModal> = ({ order, close
   const [isSubmitting, setIsSubmitting] = useState(false);
   const abortController = useAbortController();
   const invalidateLabOrders = useInvalidateLabOrders();
+  const { laboratoryOrderTypeUuid } = useConfig<Config>();
+  const { completeLabResults, values, mutateResults } = useMappedLabConcepts(order);
 
   const handleApproval = () => {
     setIsSubmitting(true);
-    setFulfillerStatus(order.uuid, 'COMPLETED', abortController).then(
-      () => {
-        invalidateLabOrders();
-        setIsSubmitting(false);
-        closeModal();
-        showSnackbar({
-          isLowContrast: true,
-          title: t('resultsApproved', 'Results Approved'),
-          kind: 'success',
-          subtitle: t('labResultsApprovedSuccessfully', 'Lab results have been successfully approved and finalized'),
+    if (completeLabResults && completeLabResults.length > 0) {
+      updateObservationAndOrder(order, 'FINAL', 'COMPLETED', abortController, values, completeLabResults)
+        .then(() => {
+          setIsSubmitting(false);
+          closeModal();
+          showSnackbar({
+            isLowContrast: true,
+            title: t('resultsApproved', 'Results Approved'),
+            kind: 'success',
+            subtitle: t('labResultsApprovedSuccessfully', 'Lab results have been successfully approved and finalized'),
+          });
+        })
+        .catch((error) => {
+          setIsSubmitting(false);
+          showNotification({
+            title: t('errorApprovingResults', 'Error approving results'),
+            kind: 'error',
+            critical: true,
+            description: error?.message,
+          });
         });
-      },
-      (error) => {
-        setIsSubmitting(false);
-        showNotification({
-          title: t('errorApprovingResults', 'Error approving results'),
-          kind: 'error',
-          critical: true,
-          description: error?.message,
-        });
-      },
-    );
+      invalidateLabOrders();
+    }
+    // setFulfillerStatus(order.uuid, 'COMPLETED', abortController).then(
+    //   () => {
+    //     // invalidateLabOrders();
+    //     setIsSubmitting(false);
+    //     closeModal();
+    //     showSnackbar({
+    //       isLowContrast: true,
+    //       title: t('resultsApproved', 'Results Approved'),
+    //       kind: 'success',
+    //       subtitle: t('labResultsApprovedSuccessfully', 'Lab results have been successfully approved and finalized'),
+    //     });
+    //   },
+    //   (error) => {
+    //     setIsSubmitting(false);
+    //     showNotification({
+    //       title: t('errorApprovingResults', 'Error approving results'),
+    //       kind: 'error',
+    //       critical: true,
+    //       description: error?.message,
+    //     });
+    //   },
+    // );
   };
 
   return (

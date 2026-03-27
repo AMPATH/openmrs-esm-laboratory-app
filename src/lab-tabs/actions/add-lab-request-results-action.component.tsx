@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@carbon/react';
 import { useTranslation } from 'react-i18next';
 import { mutate } from 'swr';
-import { AddIcon, launchWorkspace2, restBaseUrl, useConfig } from '@openmrs/esm-framework';
+import { AddIcon, launchWorkspace2, restBaseUrl, useAbortController, useConfig } from '@openmrs/esm-framework';
 import { type Order } from '@openmrs/esm-framework';
 import { type Config } from '../../config-schema';
 import styles from './actions.scss';
+import { updateObservationAndOrder, useMappedLabConcepts } from '../../laboratory.resource';
 
 interface AddLabRequestResultsActionProps {
   order: Order;
@@ -14,18 +15,32 @@ interface AddLabRequestResultsActionProps {
 const AddLabRequestResultsAction: React.FC<AddLabRequestResultsActionProps> = ({ order }) => {
   const { t } = useTranslation();
   const { laboratoryOrderTypeUuid } = useConfig<Config>();
+  const abortController = useAbortController();
+  const { completeLabResults, values, mutateResults } = useMappedLabConcepts(order);
 
-  const invalidateLabOrders = () => {
+  useEffect(() => {
+    if (completeLabResults && completeLabResults.length > 0) {
+      updateObservationAndOrder(order, 'PRELIMINARY', 'ON_HOLD', abortController, values, completeLabResults);
+      invalidateLabOrders();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [completeLabResults, order, values, abortController]);
+
+  function invalidateLabOrders() {
     mutate(
       (key) => typeof key === 'string' && key.startsWith(`${restBaseUrl}/order?orderTypes=${laboratoryOrderTypeUuid}`),
     );
+  }
+
+  const mutated = () => {
+    mutateResults();
   };
 
   const launchTestResultsWorkspace = () => {
     launchWorkspace2('lab-app-test-results-form-workspace', {
       patient: order.patient,
       order,
-      invalidateLabOrders,
+      invalidateLabOrders: mutated,
     });
   };
 

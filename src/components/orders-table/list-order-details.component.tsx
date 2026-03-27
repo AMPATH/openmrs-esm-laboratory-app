@@ -85,7 +85,7 @@ const ListOrderDetails: React.FC<ListOrdersDetailsProps> = ({ groupedOrders, pat
               )}
             </StructuredListBody>
           </StructuredListWrapper>
-          {(order.fulfillerStatus === 'COMPLETED' || order.fulfillerStatus === 'DRAFT') && (
+          {(order.fulfillerStatus === 'COMPLETED' || order.fulfillerStatus === 'ON_HOLD') && (
             <Accordion>
               <AccordionItem
                 open={order.fulfillerStatus === 'COMPLETED'}
@@ -121,14 +121,14 @@ const ListOrderDetails: React.FC<ListOrdersDetailsProps> = ({ groupedOrders, pat
                   />
                 </div>
               </>
-            ) : order.fulfillerStatus === 'DRAFT' ? (
+            ) : order.fulfillerStatus === 'ON_HOLD' ? (
               <>
                 <div className={styles.testsOrderedActions}>
-                  <ExtensionSlot
+                  {/* <ExtensionSlot
                     className={styles.menuLink}
                     state={{ order: order }}
                     name="amended-ordered-actions-slot"
-                  />
+                  /> */}
                   <ExtensionSlot
                     className={styles.menuLink}
                     state={{ order: order }}
