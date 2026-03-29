@@ -309,6 +309,28 @@ async function fetchAllSetMembers(conceptUuid: string): Promise<LabOrderConcept>
   return concept;
 }
 
+export function useOrderConceptByUuid(uuid: string) {
+  const apiUrl = `${restBaseUrl}/concept/${uuid}?v=${labConceptRepresentation}`;
+
+  const { data, error, isLoading, isValidating, mutate } = useSWR<LabOrderConcept, Error>(uuid, fetchAllSetMembers);
+  /**
+   * We are fetching 2 levels of set members at one go.
+   */
+
+  const results = useMemo(
+    () => ({
+      concept: data,
+      isLoading,
+      error,
+      isValidating,
+      mutate,
+    }),
+    [data, error, isLoading, isValidating, mutate],
+  );
+
+  return results;
+}
+
 export function useOrderConceptsByUuids(uuids: Array<string>) {
   const { data, error, isLoading, isValidating, mutate } = useSWR<Array<LabOrderConcept>, Error>(
     uuids.length ? ['concepts', ...uuids] : null,

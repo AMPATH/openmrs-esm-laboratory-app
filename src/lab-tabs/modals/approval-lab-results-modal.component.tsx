@@ -16,6 +16,7 @@ import {
   useInvalidateLabOrders,
   useMappedLabConcepts,
 } from '../../laboratory.resource';
+import styles from './approval-lab-results-modal.scss';
 
 interface ApproveLabResultsModal {
   closeModal: () => void;
@@ -89,9 +90,9 @@ const ApproveLabResultsModal: React.FC<ApproveLabResultsModal> = ({ order, close
             'You are about to approve and finalize these lab results. Once approved, the results will be marked as complete and made available to clinicians. Are you sure you want to proceed?',
           )}
         </p>
-        <>
-          <ExtensionSlot state={{ order: order }} name="completed-lab-order-results-slot" />
-        </>
+        <div className={styles.resultsContainer}>
+          <ExtensionSlot state={{ order: order }} name="completed-lab-order-results-slot-1" />
+        </div>
       </ModalBody>
       <ModalFooter>
         <Button kind="secondary" onClick={closeModal}>

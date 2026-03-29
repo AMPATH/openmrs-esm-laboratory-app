@@ -23,6 +23,8 @@ export const laboratoryDashboardLink = getSyncLifecycle(
   options,
 );
 
+export const labResult = getAsyncLifecycle(() => import('./components/lab-results/lab-results.component'), options);
+
 // Modals
 
 export const pickupLabRequestModal = getAsyncLifecycle(

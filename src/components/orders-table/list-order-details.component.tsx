@@ -95,7 +95,7 @@ const ListOrderDetails: React.FC<ListOrdersDetailsProps> = ({ groupedOrders, pat
                   <ExtensionSlot
                     className={styles.labResultSlot}
                     state={{ order: order }}
-                    name="completed-lab-order-results-slot"
+                    name="completed-lab-order-results-slot-1"
                   />
                 </div>
               </AccordionItem>
