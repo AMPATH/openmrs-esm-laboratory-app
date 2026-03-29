@@ -1,6 +1,17 @@
 import { Type, validators } from '@openmrs/esm-framework';
 
-const allowedLabTableColumns = ['name', 'urgency', 'age', 'dob', 'sex', 'totalOrders', 'action', 'patientId', 'priority'] as const;
+const allowedLabTableColumns = [
+  'name',
+  'urgency',
+  'age',
+  'dob',
+  'sex',
+  'totalOrders',
+  'action',
+  'patientId',
+  'priority',
+  'status',
+] as const;
 type LabTableColumnName = (typeof allowedLabTableColumns)[number];
 
 export const configSchema = {
@@ -11,7 +22,17 @@ export const configSchema = {
   },
   labTableColumns: {
     _type: Type.Array,
-    _default: ['name', 'urgency', 'age', 'sex', 'patientId', 'priority', 'totalOrders', 'action'] as Array<LabTableColumnName>,
+    _default: [
+      'name',
+      'urgency',
+      'age',
+      'sex',
+      'patientId',
+      'priority',
+      'status',
+      'totalOrders',
+      'action',
+    ] as Array<LabTableColumnName>,
     _description: 'The columns to display in the lab table. Allowed values: ' + allowedLabTableColumns.join(', '),
     _elements: {
       _type: Type.String,
@@ -45,6 +66,11 @@ export const configSchema = {
     _default: '5adeb9de-5545-4272-add4-a661005f727e',
     _description: 'Laboratory billable service type',
   },
+  serviceUuid: {
+    _type: Type.UUID,
+    _default: '2d4472e2-d7ab-4430-8e0e-a9ffcd809bf4',
+    _description: 'Service Uuid for filtering queues',
+  },
 };
 
 export type Config = {
@@ -55,4 +81,5 @@ export type Config = {
   usePreferredPatientIdentifier: boolean;
   filterByCurrentLocation: boolean;
   laboratoryServiceTypedUuid: string;
+  serviceUuid: string;
 };
