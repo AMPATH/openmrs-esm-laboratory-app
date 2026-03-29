@@ -26,10 +26,11 @@ import { ExtensionSlot, formatDate, parseDate, showModal, useConfig, usePaginati
 import { useTranslation } from 'react-i18next';
 import { type FulfillerStatus, type FlattenedOrder, type Order } from '../../types';
 import { type Config } from '../../config-schema';
-import { useLabOrders } from '../../laboratory.resource';
+import { useLabOrders, useQueueEntries } from '../../laboratory.resource';
 import { OrdersDateRangePicker } from './orders-date-range-picker.component';
 import ListOrderDetails from './list-order-details.component';
 import styles from './orders-data-table.scss';
+import PriorityTag from './priority-tag.component';
 
 const labTableColumnSpec = {
   name: {
@@ -61,6 +62,12 @@ const labTableColumnSpec = {
     headerLabelKey: 'priority',
     headerLabelDefault: 'Priority',
     key: 'priority',
+  },
+  status: {
+    // t('status', 'Status')
+    headerLabelKey: 'status',
+    headerLabelDefault: 'Status',
+    key: 'status',
   },
   totalOrders: {
     // t('totalOrders', 'Total Orders')
@@ -96,6 +103,7 @@ const OrdersDataTable: React.FC<OrdersDataTableProps> = (props) => {
   const [filter, setFilter] = useState<FulfillerStatus>(null);
   const [searchString, setSearchString] = useState('');
   const { labTableColumns, patientIdIdentifierTypeUuid } = useConfig<Config>();
+  const { queueEntries } = useQueueEntries();
 
   const { labOrders, isLoading } = useLabOrders({
     status: props.useFilter ? filter : props.fulfillerStatus,
@@ -132,10 +140,15 @@ const OrdersDataTable: React.FC<OrdersDataTableProps> = (props) => {
         const patient = labOrdersForPatient[0]?.patient;
         const flattenedLabOrdersForPatient = flattenedLabOrders.filter((order) => order.patientUuid === patientUuid);
 
+        const priority = queueEntries?.find((q) => q.patient_uuid === patientUuid)?.priority ?? 'NON-URGENT';
+
         return {
           patientId: patient?.identifiers
             ?.filter((identifier) =>
-              identifier.preferred && !identifier.voided && patientIdIdentifierTypeUuid
+              identifier.preferred &&
+              !identifier.voided &&
+              patientIdIdentifierTypeUuid &&
+              patientIdIdentifierTypeUuid.length
                 ? patientIdIdentifierTypeUuid.includes(identifier.identifierType.uuid)
                 : true,
             )
@@ -149,13 +162,14 @@ const OrdersDataTable: React.FC<OrdersDataTableProps> = (props) => {
           totalOrders: flattenedLabOrdersForPatient.length,
           orders: flattenedLabOrdersForPatient,
           originalOrders: labOrdersForPatient,
-          priority: flattenedLabOrders[0].urgency,
+          status: flattenedLabOrders[0].urgency,
+          priority: priority,
         };
       });
     } else {
       return [];
     }
-  }, [flattenedLabOrders, labOrders, patientIdIdentifierTypeUuid]);
+  }, [flattenedLabOrders, labOrders, patientIdIdentifierTypeUuid, queueEntries]);
 
   const searchResults = useMemo(() => {
     if (searchString && searchString.trim() !== '') {
@@ -307,9 +321,16 @@ const OrdersDataTable: React.FC<OrdersDataTableProps> = (props) => {
               {rows.map((row) => (
                 <React.Fragment key={row.id}>
                   <TableExpandRow {...getRowProps({ row })} key={row.id}>
-                    {row.cells.map((cell) => (
-                      <TableCell key={cell.id}>{cell.value?.content ?? cell.value}</TableCell>
-                    ))}
+                    {row.cells.map((cell) => {
+                      if (cell.info.header === 'priority') {
+                        return (
+                          <TableCell key={cell.id}>
+                            <PriorityTag status={cell.value?.content ?? cell.value} />
+                          </TableCell>
+                        );
+                      }
+                      return <TableCell key={cell.id}>{cell.value?.content ?? cell.value}</TableCell>;
+                    })}
                   </TableExpandRow>
                   {row.isExpanded ? (
                     <TableExpandedRow colSpan={headers.length + 2}>

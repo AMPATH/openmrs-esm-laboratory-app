@@ -19,8 +19,10 @@ import type {
   Observation,
   ObservationStatus,
   ObservationValue,
+  QueueEntryResult,
 } from './types';
 import { type Config } from './config-schema';
+import { getEtlBaseUrl } from './utils/utils';
 
 const useLabOrdersDefaultParams: UseLabOrdersParams = {
   status: null,
@@ -128,6 +130,39 @@ export function useInvalidateLabOrders() {
       { revalidate: true },
     );
   }, [laboratoryOrderTypeUuid]);
+}
+
+export function useQueueEntries(patientUuid: string = '') {
+  const [etlBaseUrl, setEtlBaseUrl] = useState('');
+  const { sessionLocation } = useSession();
+  const { serviceUuid } = useConfig<Config>();
+
+  useEffect(() => {
+    const fetchEtlBaseUrl = async () => {
+      const baseUrl = await getEtlBaseUrl();
+      setEtlBaseUrl(baseUrl);
+    };
+    fetchEtlBaseUrl();
+  }, []);
+
+  const url = `${etlBaseUrl}/queue-entry?locationUuid=${sessionLocation?.uuid}&serviceUuid=${serviceUuid}`;
+  const { data, error, mutate, isLoading, isValidating } = useSWR<{
+    data: { data: Array<QueueEntryResult> };
+  }>(`${url}`, openmrsFetch);
+
+  let filteredQueueEntries = data?.data?.data;
+
+  if (patientUuid) {
+    filteredQueueEntries = filteredQueueEntries?.filter((queueEntry) => queueEntry.patient_uuid === patientUuid);
+  }
+
+  return {
+    queueEntries: filteredQueueEntries ?? [],
+    isLoading,
+    isError: error,
+    mutate,
+    isValidating,
+  };
 }
 
 const labEncounterRepresentation =
