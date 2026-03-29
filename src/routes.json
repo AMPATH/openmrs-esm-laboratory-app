@@ -157,6 +157,14 @@
       "name": "generate-bill-request-action",
       "component": "generateBillRequestAction",
       "slot": "tests-ordered-actions-slot"
+    },
+    {
+      "name": "lab-result-1",
+      "component": "labResult",
+      "slot": "completed-lab-order-results-slot-1",
+      "meta": {
+        "fullWidth": false
+      }
     }
   ],
   "workspaces2": [

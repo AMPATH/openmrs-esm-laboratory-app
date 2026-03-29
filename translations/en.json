@@ -81,6 +81,7 @@
   "sex": "Sex",
   "startVisitToAddLabTest": "{{patientName}} does not have an active visit. Click the \"Start visit\" button next to their name to begin one.",
   "stat": "Stat",
+  "status": "Status",
   "testOrdered": "Test ordered: ",
   "Tests ordered": "Tests ordered",
   "testsOrdered": "Tests ordered",
