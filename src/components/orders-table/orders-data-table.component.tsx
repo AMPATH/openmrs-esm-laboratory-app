@@ -152,9 +152,9 @@ const OrdersDataTable: React.FC<OrdersDataTableProps> = (props) => {
           patientId: patient?.identifiers
             ?.filter((identifier) =>
               identifier.preferred &&
-                !identifier.voided &&
-                patientIdIdentifierTypeUuid &&
-                patientIdIdentifierTypeUuid.length
+              !identifier.voided &&
+              patientIdIdentifierTypeUuid &&
+              patientIdIdentifierTypeUuid.length
                 ? patientIdIdentifierTypeUuid.includes(identifier.identifierType.uuid)
                 : true,
             )
@@ -168,18 +168,22 @@ const OrdersDataTable: React.FC<OrdersDataTableProps> = (props) => {
           totalOrders: flattenedLabOrdersForPatient.length,
           orders: flattenedLabOrdersForPatient,
           originalOrders: labOrdersForPatient,
-          status: flattenedLabOrders[0].urgency,
+          status: flattenedLabOrdersForPatient[0].urgency,
           priority: priority,
-          phoneNumber: patient?.person?.attributes?.filter((attribute) => personAttributeTypeUuid && personAttributeTypeUuid.length
-            ? personAttributeTypeUuid.includes(attribute.attributeType.uuid) : true)
+          phoneNumber: patient?.person?.attributes
+            ?.filter((attribute) =>
+              personAttributeTypeUuid && personAttributeTypeUuid.length
+                ? personAttributeTypeUuid.includes(attribute.attributeType.uuid)
+                : true,
+            )
             ?.map((attribute) => attribute.value)
-            ?.join(',')
+            ?.join(','),
         };
       });
     } else {
       return [];
     }
-  }, [flattenedLabOrders, labOrders, patientIdIdentifierTypeUuid, queueEntries]);
+  }, [flattenedLabOrders, labOrders, patientIdIdentifierTypeUuid, personAttributeTypeUuid, queueEntries]);
 
   const searchResults = useMemo(() => {
     if (searchString && searchString.trim() !== '') {
