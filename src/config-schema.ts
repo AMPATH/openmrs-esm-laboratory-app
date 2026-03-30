@@ -7,6 +7,7 @@ const allowedLabTableColumns = [
   'sex',
   'totalOrders',
   'action',
+  'phoneNumber',
   'patientId',
   'priority',
   'status',
@@ -25,6 +26,7 @@ export const configSchema = {
       'name',
       'age',
       'sex',
+      'phoneNumber',
       'patientId',
       'priority',
       'status',
@@ -41,6 +43,11 @@ export const configSchema = {
     _type: Type.Array,
     _default: [],
     _description: 'Needed if the "id" column of "labTableColumns" is used. Is the OpenMRS ID by default.',
+  },
+  personAttributeTypeUuid: {
+    _type: Type.Array,
+    _default: ['72a759a8-1359-11df-a1f1-0026b9348838'],
+    _description: 'Needed for displaying person attributes',
   },
   enableReviewingLabResultsBeforeApproval: {
     _type: Type.Boolean,
@@ -69,6 +76,7 @@ export type Config = {
   enableReviewingLabResultsBeforeApproval: boolean;
   laboratoryOrderTypeUuid: string;
   labTableColumns: Array<LabTableColumnName>;
+  personAttributeTypeUuid: Array<string>;
   patientIdIdentifierTypeUuid: Array<string>;
   filterByCurrentLocation: boolean;
   laboratoryServiceTypedUuid: string;

@@ -58,7 +58,7 @@ export function useLabOrders(params: Partial<UseLabOrdersParams> = useLabOrdersD
   const { sessionLocation } = useSession();
 
   const { laboratoryOrderTypeUuid, filterByCurrentLocation } = useConfig<Config>();
-  const customRepresentation = `custom:(uuid,orderNumber,patient:(uuid,display,person:(uuid,display,age,birthdate,gender)${
+  const customRepresentation = `custom:(uuid,orderNumber,patient:(uuid,display,person:(uuid,display,age,birthdate,gender,attributes)${
     includePatientId ? ',identifiers' : ''
   }),concept:(uuid,display),action,careSetting:(uuid,display,description,careSettingType,display),previousOrder,dateActivated,scheduledDate,dateStopped,autoExpireDate,encounter:(uuid,display,location:(uuid)),orderer:(uuid,display),orderReason,orderReasonNonCoded,orderType:(uuid,display,name,description,conceptClasses,parent),urgency,instructions,commentToFulfiller,display,fulfillerStatus,fulfillerComment,accessionNumber,specimenSource,laterality,clinicalHistory,frequency,numberOfRepeats)`;
   let url = `${restBaseUrl}/order?orderTypes=${laboratoryOrderTypeUuid}&v=${customRepresentation}`;
@@ -148,7 +148,7 @@ export function useQueueEntries(patientUuid: string = '') {
   const url = `${etlBaseUrl}/queue-entry?locationUuid=${sessionLocation?.uuid}&serviceUuid=${serviceUuid}`;
   const { data, error, mutate, isLoading, isValidating } = useSWR<{
     data: { data: Array<QueueEntryResult> };
-  }>(`${url}`, openmrsFetch);
+  }>(etlBaseUrl ? `${url}` : null, openmrsFetch);
 
   let filteredQueueEntries = data?.data?.data;
 

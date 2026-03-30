@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Button, ModalBody, ModalFooter, ModalHeader } from '@carbon/react';
 import {
   type Config,
@@ -8,6 +8,7 @@ import {
   useAbortController,
   useConfig,
   type Order,
+  showModal,
 } from '@openmrs/esm-framework';
 import { useTranslation } from 'react-i18next';
 import {
@@ -36,6 +37,7 @@ const ApproveLabResultsModal: React.FC<ApproveLabResultsModal> = ({ order, close
     if (completeLabResults && completeLabResults.length > 0) {
       updateObservationAndOrder(order, 'FINAL', 'COMPLETED', abortController, values, completeLabResults)
         .then(() => {
+          invalidateLabOrders();
           setIsSubmitting(false);
           closeModal();
           showSnackbar({
@@ -54,7 +56,6 @@ const ApproveLabResultsModal: React.FC<ApproveLabResultsModal> = ({ order, close
             description: error?.message,
           });
         });
-      invalidateLabOrders();
     }
     // setFulfillerStatus(order.uuid, 'COMPLETED', abortController).then(
     //   () => {
@@ -80,6 +81,16 @@ const ApproveLabResultsModal: React.FC<ApproveLabResultsModal> = ({ order, close
     // );
   };
 
+  const handleReject = () => {
+    closeModal();
+    setTimeout(() => {
+      const dispose = showModal('reject-lab-request-modal', {
+        closeModal: () => dispose(),
+        order,
+      });
+    }, 0);
+  };
+
   return (
     <div>
       <ModalHeader closeModal={closeModal} title={t('approveLabResults', 'Approve Lab Results')} />
@@ -95,8 +106,8 @@ const ApproveLabResultsModal: React.FC<ApproveLabResultsModal> = ({ order, close
         </div>
       </ModalBody>
       <ModalFooter>
-        <Button kind="secondary" onClick={closeModal}>
-          {t('cancel', 'Cancel')}
+        <Button kind="danger" onClick={handleReject}>
+          {t('rejectLabResults', 'Reject lab results')}
         </Button>
         <Button type="submit" onClick={handleApproval} disabled={isSubmitting}>
           {t('approveResults', 'Approve Results')}
