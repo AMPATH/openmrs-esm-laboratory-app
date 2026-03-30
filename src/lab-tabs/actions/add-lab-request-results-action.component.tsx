@@ -20,8 +20,11 @@ const AddLabRequestResultsAction: React.FC<AddLabRequestResultsActionProps> = ({
 
   useEffect(() => {
     if (completeLabResults && completeLabResults.length > 0) {
-      updateObservationAndOrder(order, 'PRELIMINARY', 'ON_HOLD', abortController, values, completeLabResults);
-      invalidateLabOrders();
+      updateObservationAndOrder(order, 'PRELIMINARY', 'ON_HOLD', abortController, values, completeLabResults).then(
+        (v) => {
+          invalidateLabOrders();
+        },
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [completeLabResults, order, values, abortController]);
