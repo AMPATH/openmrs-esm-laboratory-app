@@ -99,6 +99,12 @@ const labTableColumnSpec = {
     headerLabelDefault: 'Patient ID',
     key: 'patientId',
   },
+  phoneNumber: {
+    // t('phoneNumber', 'Phone number')
+    headerLabelKey: 'phoneNumber',
+    headerLabelDefault: 'Phone number',
+    key: 'phoneNumber',
+  },
 };
 
 export interface OrdersDataTableProps {
@@ -114,7 +120,7 @@ const OrdersDataTable: React.FC<OrdersDataTableProps> = (props) => {
   const { t } = useTranslation();
   const [filter, setFilter] = useState<FulfillerStatus>(null);
   const [searchString, setSearchString] = useState('');
-  const { labTableColumns, patientIdIdentifierTypeUuid, usePreferredPatientIdentifier } = useConfig<Config>();
+  const { labTableColumns, patientIdIdentifierTypeUuid, personAttributeTypeUuid, usePreferredPatientIdentifier } = useConfig<Config>();
   const { queueEntries } = useQueueEntries();
 
   const { labOrders, isLoading, isError, mutate } = useLabOrders({
@@ -175,6 +181,10 @@ const OrdersDataTable: React.FC<OrdersDataTableProps> = (props) => {
           urgencyCounts,
           status: flattenedLabOrders[0].urgency,
           priority: priority,
+          phoneNumber: patient?.person?.attributes?.filter((attribute) => personAttributeTypeUuid && personAttributeTypeUuid.length
+            ? personAttributeTypeUuid.includes(attribute.attributeType.uuid) : true)
+            ?.map((attribute) => attribute.value)
+            ?.join(',')
         };
       });
     } else {
