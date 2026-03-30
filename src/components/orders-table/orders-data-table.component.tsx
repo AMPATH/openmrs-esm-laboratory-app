@@ -181,16 +181,20 @@ const OrdersDataTable: React.FC<OrdersDataTableProps> = (props) => {
           urgencyCounts,
           status: flattenedLabOrders[0].urgency,
           priority: priority,
-          phoneNumber: patient?.person?.attributes?.filter((attribute) => personAttributeTypeUuid && personAttributeTypeUuid.length
-            ? personAttributeTypeUuid.includes(attribute.attributeType.uuid) : true)
+          phoneNumber: patient?.person?.attributes
+            ?.filter((attribute) =>
+              personAttributeTypeUuid && personAttributeTypeUuid.length
+                ? personAttributeTypeUuid.includes(attribute.attributeType.uuid)
+                : true,
+            )
             ?.map((attribute) => attribute.value)
-            ?.join(',')
+            ?.join(','),
         };
       });
     } else {
       return [];
     }
-  }, [flattenedLabOrders, labOrders, patientIdIdentifierTypeUuid, usePreferredPatientIdentifier, queueEntries]);
+  }, [flattenedLabOrders, labOrders, patientIdIdentifierTypeUuid, personAttributeTypeUuid, usePreferredPatientIdentifier, queueEntries]);
 
   const searchResults = useMemo(() => {
     if (searchString && searchString.trim() !== '') {
