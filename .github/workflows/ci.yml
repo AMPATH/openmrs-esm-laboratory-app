@@ -158,7 +158,7 @@ jobs:
 
     steps:
       - name: 🚀 Trigger RefApp Build
-        uses: fjogeleit/http-request-action@v1
+        uses: fjogeleit/http-request-action@v2
         with:
           url: https://ci.openmrs.org/rest/api/latest/queue/O3-BF
           method: "POST"
