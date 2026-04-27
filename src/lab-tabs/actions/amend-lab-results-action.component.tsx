@@ -20,7 +20,9 @@ const AmendLabResultsAction: React.FC<AmendLabResultsActionMenuProps> = ({ order
 
     const dispose = showModal('edit-lab-results-modal', {
       closeModal: () => dispose(),
-      orders: editableOrders,
+      patient: editableOrders[0]?.patient,
+      orders: editableOrders.map((o) => ({ ...o, fulfillerStatus: 'COMPLETED' })),
+      workspaceName: 'lab-app-test-results-form-workspace',
     });
   };
 
