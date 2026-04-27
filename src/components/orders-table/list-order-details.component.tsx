@@ -124,11 +124,11 @@ const ListOrderDetails: React.FC<ListOrdersDetailsProps> = ({ groupedOrders, pat
             ) : order.fulfillerStatus === 'ON_HOLD' ? (
               <>
                 <div className={styles.testsOrderedActions}>
-                  {/* <ExtensionSlot
+                  <ExtensionSlot
                     className={styles.menuLink}
                     state={{ order: order }}
                     name="amended-ordered-actions-slot"
-                  /> */}
+                  />
                   <ExtensionSlot
                     className={styles.menuLink}
                     state={{ order: order }}
