@@ -43,3 +43,19 @@ export const getOrderNumberFromHie = async (orderNumber: string) => {
   const url = `${hieBaseUrl}/bill-order?order_no=${orderNumber}`;
   return postJson<{ bill_uuid: string; line_item_uuid: string }>(url, null, 'GET');
 };
+
+export const getOdooBills = async (patientUuid: string) => {
+  let hieBaseUrl = await getHieBaseUrl();
+  if (!hieBaseUrl) {
+    hieBaseUrl = `/openmrs/etl/`;
+  }
+  const url = `${hieBaseUrl}/odoo/billing/patient/${patientUuid}`;
+  return postJson<{
+    orders: Array<{
+      order_lines: Array<{
+        billing_status: string;
+        openmrs_order_id: string;
+      }>;
+    }>;
+  }>(url, null, 'GET');
+};
