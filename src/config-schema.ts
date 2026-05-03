@@ -70,6 +70,11 @@ export const configSchema = {
     _default: '2d4472e2-d7ab-4430-8e0e-a9ffcd809bf4',
     _description: 'Service Uuid for filtering queues',
   },
+  enableOdooBilling: {
+    _type: Type.Boolean,
+    _default: false,
+    _description: 'Enable Odoo billing',
+  },
 };
 
 export type Config = {
@@ -81,4 +86,5 @@ export type Config = {
   filterByCurrentLocation: boolean;
   laboratoryServiceTypedUuid: string;
   serviceUuid: string;
+  enableOdooBilling: boolean;
 };
