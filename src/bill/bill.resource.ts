@@ -39,7 +39,10 @@ export function useInvalidateBills(patientUuid: string) {
 }
 
 export const getOrderNumberFromHie = async (orderNumber: string) => {
-  const hieBaseUrl = await getHieBaseUrl();
+  let hieBaseUrl = await getHieBaseUrl();
+  if (!hieBaseUrl) {
+    hieBaseUrl = `/hie`;
+  }
   const url = `${hieBaseUrl}/bill-order?order_no=${orderNumber}`;
   return postJson<{ bill_uuid: string; line_item_uuid: string }>(url, null, 'GET');
 };
