@@ -75,6 +75,11 @@ export const configSchema = {
     _default: false,
     _description: 'Enable Odoo billing',
   },
+  blockedPaymentModes: {
+    _type: Type.Array,
+    _default: ['MPESA', 'CASH'],
+    _description: 'Payment modes that require bill generation before picking an order',
+  },
 };
 
 export type Config = {
@@ -87,4 +92,5 @@ export type Config = {
   laboratoryServiceTypedUuid: string;
   serviceUuid: string;
   enableOdooBilling: boolean;
+  blockedPaymentModes: Array<string>;
 };

@@ -15,7 +15,7 @@ const OrderedActionsExtensionSlot: React.FC<OrderedActionsExtensionSlotProps> = 
   const [status, setStatus] = useState<BillStatus>('BLANK');
   const [isLoadingOdooBills, setIsLoadingOdooBills] = useState(false);
   const invalidateBills = useInvalidateBills(order?.patient?.uuid);
-  const { enableOdooBilling } = useConfig<Config>();
+  const { enableOdooBilling, blockedPaymentModes } = useConfig<Config>();
 
   const mutated = () => {
     invalidateBills();
@@ -29,7 +29,7 @@ const OrderedActionsExtensionSlot: React.FC<OrderedActionsExtensionSlotProps> = 
         const bill = bills.find((b) => b.uuid === billUuid);
         const lineItem = bill?.lineItems?.find((i) => i.uuid === response?.line_item_uuid);
         if (lineItem) {
-          if (lineItem.priceName === 'SHA') {
+          if (!blockedPaymentModes.includes(lineItem.priceName.toUpperCase())) {
             setStatus('PAID');
           } else {
             setStatus(lineItem?.paymentStatus as BillStatus);
@@ -70,7 +70,7 @@ const OrderedActionsExtensionSlot: React.FC<OrderedActionsExtensionSlotProps> = 
         getBillStatus();
       }
     }
-  }, [order, bills, enableOdooBilling]);
+  }, [order, bills, enableOdooBilling, blockedPaymentModes]);
 
   if (isLoadingOdooBills) {
     return <InlineLoading />;
