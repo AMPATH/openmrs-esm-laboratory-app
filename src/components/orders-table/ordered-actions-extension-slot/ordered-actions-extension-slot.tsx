@@ -1,7 +1,7 @@
 import { ExtensionSlot, useConfig } from '@openmrs/esm-framework';
 import { type BillInvoice, type BillStatus, type Order } from '../../../types';
 import React, { useEffect, useState } from 'react';
-import { useInvalidateBills, useOdooBills, useOrderBill } from '../../../bill/bill.resource';
+import { useInvalidateBills, useInvalidateOrderBill, useOdooBills, useOrderBill } from '../../../bill/bill.resource';
 import { type Config } from '../../../config-schema';
 import { InlineLoading } from '@carbon/react';
 
@@ -14,12 +14,14 @@ interface OrderedActionsExtensionSlotProps {
 const OrderedActionsExtensionSlot: React.FC<OrderedActionsExtensionSlotProps> = ({ order, bills, isLoading }) => {
   const [status, setStatus] = useState<BillStatus>('BLANK');
   const invalidateBills = useInvalidateBills(order?.patient?.uuid);
+  const invalidateOrderBill = useInvalidateOrderBill(order?.orderNumber);
   const { enableOdooBilling, blockedPaymentModes } = useConfig<Config>();
   const { orderBill, isLoadingOrderBill } = useOrderBill(order?.orderNumber);
   const { odooBills, isLoadingOdooBills } = useOdooBills(order?.patient?.uuid, enableOdooBilling);
 
   const mutated = () => {
     invalidateBills();
+    invalidateOrderBill();
   };
 
   useEffect(() => {
