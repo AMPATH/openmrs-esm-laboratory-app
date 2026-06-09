@@ -1,7 +1,7 @@
 import { ExtensionSlot, useConfig } from '@openmrs/esm-framework';
 import { type BillInvoice, type BillStatus, type Order } from '../../../types';
-import React, { useEffect, useMemo, useState } from 'react';
-import { getOdooBills, getOrderNumberFromHie, useInvalidateBills } from '../../../bill/bill.resource';
+import React, { useEffect, useState } from 'react';
+import { useInvalidateBills, useOdooBills, useOrderBill } from '../../../bill/bill.resource';
 import { type Config } from '../../../config-schema';
 import { InlineLoading } from '@carbon/react';
 
@@ -13,21 +13,22 @@ interface OrderedActionsExtensionSlotProps {
 
 const OrderedActionsExtensionSlot: React.FC<OrderedActionsExtensionSlotProps> = ({ order, bills, isLoading }) => {
   const [status, setStatus] = useState<BillStatus>('BLANK');
-  const [isLoadingOdooBills, setIsLoadingOdooBills] = useState(false);
   const invalidateBills = useInvalidateBills(order?.patient?.uuid);
   const { enableOdooBilling, blockedPaymentModes } = useConfig<Config>();
+  const { orderBill, isLoadingOrderBill } = useOrderBill(order?.orderNumber);
+  const { odooBills, isLoadingOdooBills } = useOdooBills(order?.patient?.uuid, enableOdooBilling);
 
   const mutated = () => {
     invalidateBills();
   };
 
   useEffect(() => {
-    const getBillStatus = async () => {
-      try {
-        const response = await getOrderNumberFromHie(order?.orderNumber);
-        const billUuid = response.bill_uuid;
+    if (!enableOdooBilling) {
+      if (!isLoading && !isLoadingOrderBill && orderBill) {
+        const billUuid = orderBill?.bill_uuid;
+        const lineItemUuid = orderBill?.line_item_uuid;
         const bill = bills.find((b) => b.uuid === billUuid);
-        const lineItem = bill?.lineItems?.find((i) => i.uuid === response?.line_item_uuid);
+        const lineItem = bill?.lineItems?.find((i) => i.uuid === lineItemUuid);
         if (lineItem) {
           if (!blockedPaymentModes.includes(lineItem.priceName.toUpperCase())) {
             setStatus('PAID');
@@ -37,42 +38,22 @@ const OrderedActionsExtensionSlot: React.FC<OrderedActionsExtensionSlotProps> = 
         } else {
           setStatus('BLANK');
         }
-      } catch (error) {
-        setStatus('BLANK');
       }
-    };
-
-    const odooBills = async () => {
-      try {
-        setIsLoadingOdooBills(true);
-        const results = await getOdooBills(order?.patient?.uuid);
-        if (results.orders && results.orders[0].order_lines && results.orders[0].order_lines.length) {
-          const currentOrder = results.orders[0].order_lines.find((o) => o.openmrs_order_id === order?.uuid);
-          if (currentOrder) {
-            if (currentOrder.billing_status.toUpperCase() === 'PAID') {
-              setStatus('PAID');
-            } else {
-              setStatus('PENDING');
-            }
+    } else {
+      if (odooBills && odooBills.orders && odooBills.orders[0].order_lines && odooBills.orders[0].order_lines.length) {
+        const currentOrder = odooBills.orders[0].order_lines.find((o) => o.openmrs_order_id === order?.uuid);
+        if (currentOrder) {
+          if (currentOrder.billing_status.toUpperCase() === 'PAID') {
+            setStatus('PAID');
+          } else {
+            setStatus('PENDING');
           }
         }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoadingOdooBills(false);
-      }
-    };
-
-    if (enableOdooBilling) {
-      odooBills();
-    } else {
-      if (order?.orderNumber) {
-        getBillStatus();
       }
     }
-  }, [order, bills, enableOdooBilling, blockedPaymentModes]);
+  }, [order, isLoading, bills, odooBills, orderBill, isLoadingOrderBill, blockedPaymentModes, enableOdooBilling]);
 
-  if (isLoadingOdooBills) {
+  if (isLoadingOdooBills || isLoading || isLoadingOrderBill) {
     return <InlineLoading />;
   }
 
