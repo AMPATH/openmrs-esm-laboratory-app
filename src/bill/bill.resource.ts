@@ -63,6 +63,16 @@ export const useOrderBill = (orderNumber: string) => {
   };
 };
 
+export function useInvalidateOrderBill(orderNumber: string) {
+  const { hieBaseUrl } = useConfig({
+    externalModuleName: '@ampath/esm-dha-workflow-app',
+  });
+  return useCallback(() => {
+    const url = `${hieBaseUrl}/bill-order?order_no=${orderNumber}`;
+    mutate((key) => typeof key === 'string' && key.startsWith(`${url}`), undefined, { revalidate: true });
+  }, [orderNumber, hieBaseUrl]);
+}
+
 export const useOdooBills = (patientUuid: string, enableOdooBilling: boolean = false) => {
   const url = enableOdooBilling ? `etl/odoo/billing/patient/${patientUuid}` : null;
 
