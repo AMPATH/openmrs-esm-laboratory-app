@@ -240,6 +240,9 @@ const PostToEidModal: React.FC<PostToEidModalProps> = ({ order, closeModal }) =>
                 id="eid-date-received"
                 labelText={t('dateReceived', 'Date received')}
                 placeholder="YYYY-MM-DD"
+                // Carbon's exported type for `pattern` is a stale PropTypes validator signature;
+                // the runtime prop is a plain regex string (see DatePickerInput's default value).
+                pattern={'\\d{4}-\\d{2}-\\d{2}' as unknown as never}
               />
             </DatePicker>
 
