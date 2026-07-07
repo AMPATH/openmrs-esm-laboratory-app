@@ -42,6 +42,8 @@ export const rejectLabRequestModal = getAsyncLifecycle(
   options,
 );
 
+export const postToEidModal = getAsyncLifecycle(() => import('./eid/post-to-eid-modal.component'), options);
+
 // Tables and tiles
 // t('Tests ordered', 'Tests ordered')
 export const allLabRequestsTable = getAsyncLifecycle(
@@ -124,6 +126,8 @@ export const generateBillRequestAction = getAsyncLifecycle(
   () => import('./lab-tabs/actions/generate-bill-request-action.component'),
   options,
 );
+
+export const postToEidAction = getAsyncLifecycle(() => import('./eid/post-to-eid-action.component'), options);
 
 export function startupApp() {
   defineConfigSchema(moduleName, configSchema);

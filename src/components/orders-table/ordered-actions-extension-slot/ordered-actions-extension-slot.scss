@@ -1,0 +1,8 @@
+@use '@carbon/layout';
+
+.actionsSlot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: layout.$spacing-03;
+}
