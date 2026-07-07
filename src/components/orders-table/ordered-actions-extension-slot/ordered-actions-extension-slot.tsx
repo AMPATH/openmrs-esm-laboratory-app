@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useInvalidateBills, useInvalidateOrderBill, useOdooBills, useOrderBill } from '../../../bill/bill.resource';
 import { type Config } from '../../../config-schema';
 import { InlineLoading } from '@carbon/react';
+import styles from './ordered-actions-extension-slot.scss';
 
 interface OrderedActionsExtensionSlotProps {
   order: Order;
@@ -60,7 +61,11 @@ const OrderedActionsExtensionSlot: React.FC<OrderedActionsExtensionSlotProps> = 
   }
 
   return (
-    <ExtensionSlot state={{ order: order, billStatus: status, isLoading, mutated }} name="tests-ordered-actions-slot" />
+    <ExtensionSlot
+      className={styles.actionsSlot}
+      state={{ order: order, billStatus: status, isLoading, mutated }}
+      name="tests-ordered-actions-slot"
+    />
   );
 };
 

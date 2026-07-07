@@ -40,6 +40,10 @@
       "component": "rejectLabRequestModal"
     },
     {
+      "name": "post-to-eid-modal",
+      "component": "postToEidModal"
+    },
+    {
       "name": "all-lab-requests-table",
       "slot": "lab-panels-slot",
       "order": 0,
@@ -158,6 +162,11 @@
     {
       "name": "generate-bill-request-action",
       "component": "generateBillRequestAction",
+      "slot": "tests-ordered-actions-slot"
+    },
+    {
+      "name": "post-to-eid-action",
+      "component": "postToEidAction",
       "slot": "tests-ordered-actions-slot"
     },
     {
