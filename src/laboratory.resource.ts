@@ -52,8 +52,9 @@ export function useLabOrders(params: Partial<UseLabOrdersParams> = useLabOrdersD
     ...useLabOrdersDefaultParams,
     ...definedParams,
   };
+  const fallbackDateRange = useMemo<[Date, Date]>(() => [dayjs().startOf('day').toDate(), new Date()], []);
   const { dateRange } = useAppContext<DateFilterContext>('laboratory-date-filter') ?? {
-    dateRange: [dayjs().startOf('day').toDate(), new Date()],
+    dateRange: fallbackDateRange,
   };
   const { sessionLocation } = useSession();
 
