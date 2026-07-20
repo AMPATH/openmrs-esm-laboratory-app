@@ -5,7 +5,7 @@ import { getHieBaseUrl, postJson } from '../utils/utils';
 import { useCallback } from 'react';
 
 export const useBills = (patientUuid: string = '', billStatus: string = 'PENDING') => {
-  const url = `${restBaseUrl}/billing/bill?patientUuid=${patientUuid}&v=custom:(uuid,patient:(uuid),lineItems:(uuid,billableService,quantity,price,item,priceUuid,priceName,lineItemOrder,paymentStatus),status)`;
+  const url = `${restBaseUrl}/billing/bill?patientUuid=${patientUuid}&v=custom:(uuid,patient:(uuid),lineItems:(uuid,billableService,quantity,price,item,priceUuid,priceName,lineItemOrder,status),status)`;
 
   const {
     data,
