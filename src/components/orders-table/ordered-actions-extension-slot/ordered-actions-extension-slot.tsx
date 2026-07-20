@@ -36,7 +36,7 @@ const OrderedActionsExtensionSlot: React.FC<OrderedActionsExtensionSlotProps> = 
           if (!blockedPaymentModes.includes(lineItem.priceName.toUpperCase())) {
             setStatus('PAID');
           } else {
-            setStatus(lineItem?.paymentStatus as BillStatus);
+            setStatus(lineItem?.status as BillStatus);
           }
         } else {
           setStatus('BLANK');
