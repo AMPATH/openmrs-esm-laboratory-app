@@ -151,10 +151,7 @@ const OrdersDataTable: React.FC<OrdersDataTableProps> = (props) => {
         return {
           patientId: patient?.identifiers
             ?.filter((identifier) =>
-              identifier.preferred &&
-              !identifier.voided &&
-              patientIdIdentifierTypeUuid &&
-              patientIdIdentifierTypeUuid.length
+              !identifier.voided && patientIdIdentifierTypeUuid && patientIdIdentifierTypeUuid.length
                 ? patientIdIdentifierTypeUuid.includes(identifier.identifierType.uuid)
                 : true,
             )

@@ -41,7 +41,7 @@ export const configSchema = {
   },
   patientIdIdentifierTypeUuid: {
     _type: Type.Array,
-    _default: [],
+    _default: ['e88dc246-3614-4ee3-8141-1f2a83054e72', '58a47054-1359-11df-a1f1-0026b9348838'],
     _description: 'Needed if the "id" column of "labTableColumns" is used. Is the OpenMRS ID by default.',
   },
   personAttributeTypeUuid: {
