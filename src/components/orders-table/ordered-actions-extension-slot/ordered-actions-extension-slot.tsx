@@ -27,7 +27,7 @@ const OrderedActionsExtensionSlot: React.FC<OrderedActionsExtensionSlotProps> = 
 
   useEffect(() => {
     if (!enableOdooBilling) {
-      if (!isLoading && !isLoadingOrderBill && orderBill) {
+      if (!isLoading && !isLoadingOrderBill && orderBill && bills) {
         const billUuid = orderBill?.bill_uuid;
         const lineItemUuid = orderBill?.line_item_uuid;
         const bill = bills.find((b) => b.uuid === billUuid);
