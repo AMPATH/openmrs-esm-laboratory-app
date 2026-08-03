@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ReactNode } from 'react';
 import {
@@ -11,11 +11,11 @@ import {
   Tag,
 } from '@carbon/react';
 import { capitalize } from 'lodash-es';
-import { ExtensionSlot, formatDate, parseDate } from '@openmrs/esm-framework';
+import { ExtensionSlot, formatDate, parseDate, useVisit } from '@openmrs/esm-framework';
 import { urgencyTagType, formatUrgencyLabel } from '../../utils';
 import { type GroupedOrders } from '../../types';
 import styles from './list-order-details.scss';
-import { useBills } from '../../bill/bill.resource';
+import { useBills, usePreauthPreview } from '../../bill/bill.resource';
 import OrderedActionsExtensionSlot from './ordered-actions-extension-slot/ordered-actions-extension-slot';
 
 type OrderDetailsRowProps = {
@@ -44,6 +44,17 @@ const ListOrderDetails: React.FC<ListOrdersDetailsProps> = ({ groupedOrders, pat
   const { t } = useTranslation();
   const originalOrders = groupedOrders?.originalOrders ?? [];
   const { bills, isLoading } = useBills(patientUuid);
+  const { activeVisit } = useVisit(patientUuid);
+  const consentToken = useMemo(() => {
+    if (activeVisit) {
+      return (
+        activeVisit?.attributes?.find((atr) => atr?.attributeType?.uuid === '4962a633-c4f8-474c-857c-5c68c72fbbe3')
+          ?.value ?? ''
+      );
+    }
+    return '';
+  }, [activeVisit]);
+  const { isLoading: isLoadingPreauthRequests, preauthRequests } = usePreauthPreview(consentToken);
 
   const getOrderReason = (order: (typeof originalOrders)[number]) => {
     if (order?.orderReason) {
@@ -122,7 +133,13 @@ const ListOrderDetails: React.FC<ListOrdersDetailsProps> = ({ groupedOrders, pat
               <>
                 <div className={styles.testsOrderedActions}>
                   <ExtensionSlot state={{ order: order }} name="rejected-ordered-actions-slot" />
-                  <OrderedActionsExtensionSlot order={order} bills={bills} isLoading={isLoading} />
+                  <OrderedActionsExtensionSlot
+                    order={order}
+                    bills={bills}
+                    isLoading={isLoading}
+                    preauthRequests={preauthRequests}
+                    isLoadingPreauthRequests={isLoadingPreauthRequests}
+                  />
                   <ExtensionSlot state={{ order: order }} name="add-lab-order-details-slot" />
                 </div>
               </>
