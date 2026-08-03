@@ -1,8 +1,6 @@
-import React, { useCallback, useMemo } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, InlineLoading } from '@carbon/react';
-import { launchWorkspace, useConfig, type Order } from '@openmrs/esm-framework';
-import styles from './actions.scss';
+import { ExtensionSlot, launchWorkspace, useConfig, type Order } from '@openmrs/esm-framework';
 import { type Config } from '../../config-schema';
 import { type BillStatus } from '../../types';
 
@@ -28,20 +26,17 @@ const GenerateBillRequestAction: React.FC<GenerateBillRequestActionMenuProps> = 
       order,
       quantity: 1,
       serviceTypeUuid: laboratoryServiceTypedUuid,
-      servicePointName: "LABORATORY",
+      servicePointName: 'LABORATORY',
       mutated,
     });
   };
 
-  return billStatus === 'PENDING' ? (
-    <Button className={styles.actionButton} size="sm" kind="danger" key={order.uuid}>
-      {t('pendingPayment', 'Pending payment')}
-    </Button>
-  ) : billStatus === 'BLANK' ? (
-    <Button className={styles.actionButton} size="sm" kind="primary" key={order.uuid} onClick={launchBillWorkspace}>
-      {t('generateBill', 'Generate bill')}
-    </Button>
-  ) : null;
+  return (
+    <ExtensionSlot
+      state={{ order, billStatus, isLoading, launchBillWorkspace }}
+      name="generate-order-bill-button-slot"
+    />
+  );
 };
 
 export default GenerateBillRequestAction;
