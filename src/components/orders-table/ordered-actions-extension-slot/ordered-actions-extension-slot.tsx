@@ -57,6 +57,9 @@ const OrderedActionsExtensionSlot: React.FC<OrderedActionsExtensionSlotProps> = 
                   if (intervention.status?.trim()?.toUpperCase() === 'FINALISED') {
                     setStatus('PAID');
                   }
+                  if (intervention.status?.trim()?.toUpperCase() === 'REJECTED') {
+                    setStatus('PREAUTHORIZATION REJECTED');
+                  }
                 } else {
                   setStatus('NEEDS PREAUTHORIZATION');
                 }
