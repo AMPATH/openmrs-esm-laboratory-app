@@ -6,7 +6,7 @@ import { useCallback } from 'react';
 import { type PreauthPreviewResponse, type OrderBillResponse } from './bill.types';
 
 export const useBills = (patientUuid: string = '', billStatus: string = 'PENDING') => {
-  const url = `${restBaseUrl}/billing/bill?patientUuid=${patientUuid}&v=custom:(uuid,patient:(uuid),lineItems:(uuid,billableService,quantity,price,item,priceUuid,priceName,lineItemOrder,status),status)`;
+  const url = `${restBaseUrl}/billing/bill?patientUuid=${patientUuid}&v=custom:(uuid,patient:(uuid),lineItems:(uuid,billableService,quantity,price,item,priceName,lineItemOrder,status),status)`;
 
   const {
     data,

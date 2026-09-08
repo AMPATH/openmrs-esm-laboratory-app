@@ -67,10 +67,10 @@ __metadata:
     swc-loader: "npm:^0.2.3"
     turbo: "npm:^2.5.2"
     typescript: "npm:^5.0.0"
-    webpack: "npm:5.99.9"
+    webpack: "npm:5.105.3"
     webpack-cli: "npm:^6.0.1"
   peerDependencies:
-    "@openmrs/esm-framework": 9.x
+    "@openmrs/esm-framework": "*"
     dayjs: 1.x
     react: 18.x
     react-i18next: 16.x
@@ -2902,9 +2902,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openmrs/esm-navigation@npm:9.0.1-pre.4001":
-  version: 9.0.1-pre.4001
-  resolution: "@openmrs/esm-navigation@npm:9.0.1-pre.4001"
+"@openmrs/esm-navigation@npm:10.0.1-pre.5324":
+  version: 10.0.1-pre.5324
+  resolution: "@openmrs/esm-navigation@npm:10.0.1-pre.5324"
   dependencies:
     path-to-regexp: "npm:^8.3.0"
   peerDependencies:
@@ -13222,6 +13222,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"powershell-utils@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "powershell-utils@npm:0.1.0"
+  checksum: 10/4cc0846bc903ef9c8ac8cc9d178185d5972160a6c8776d44cf4c27ce31c0b614fc7cd20a53e8fcaf7f5296cdb34087a5d4396bdd863492972c84f76f3cadef67
+  languageName: node
+  linkType: hard
+
 "prelude-ls@npm:^1.2.1":
   version: 1.2.1
   resolution: "prelude-ls@npm:1.2.1"
@@ -15339,9 +15346,27 @@ __metadata:
   peerDependencies:
     webpack: ^5.1.0
   peerDependenciesMeta:
+    "@minify-html/node":
+      optional: true
     "@swc/core":
       optional: true
+    "@swc/css":
+      optional: true
+    "@swc/html":
+      optional: true
+    clean-css:
+      optional: true
+    cssnano:
+      optional: true
+    csso:
+      optional: true
     esbuild:
+      optional: true
+    html-minifier-terser:
+      optional: true
+    lightningcss:
+      optional: true
+    postcss:
       optional: true
     uglify-js:
       optional: true
@@ -16248,9 +16273,8 @@ __metadata:
   version: 2.5.1
   resolution: "watchpack@npm:2.5.1"
   dependencies:
-    glob-to-regexp: "npm:^0.4.1"
     graceful-fs: "npm:^4.1.2"
-  checksum: 10/9c9cdd4a9f9ae146b10d15387f383f52589e4cc27b324da6be8e7e3e755255b062a69dd7f00eef2ce67b2c01e546aae353456e74f8c1350bba00462cc6375549
+  checksum: 10/203a41249b20521da0d86d9449510b66764440a189351eb3d2f84257bfddd4713ba984b7a1e1c1ef5938d987f7df37ee960ec0e2606a204d372f6366ea816e25
   languageName: node
   linkType: hard
 
@@ -16729,6 +16753,21 @@ __metadata:
     utf-8-validate:
       optional: true
   checksum: 10/8856922c26fd2d106931c16310d9a0bc2d6d37ed8771352bfa0d2a36df0ab5cb1f6528c6db8213f3333cf4ce93925e56f13604df0454cb0d4289fef922bebcdd
+  languageName: node
+  linkType: hard
+
+"ws@npm:8.21.0, ws@npm:^8.18.0, ws@npm:^8.2.3":
+  version: 8.21.0
+  resolution: "ws@npm:8.21.0"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ">=5.0.2"
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: 10/088411956432c8f876158409d5a285cb9ad1382f593391f51d3a599bd0a5b277f876609ebd00fc3596321c4a4c9064d6fffe1ebad960e8ea7fd9ae25324f35c2
   languageName: node
   linkType: hard
 
