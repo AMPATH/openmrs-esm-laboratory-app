@@ -60,7 +60,6 @@ export interface LineItem {
   quantity: string;
   price: string;
   item: string;
-  priceUuid: string;
   priceName: string;
   status: string;
 }
