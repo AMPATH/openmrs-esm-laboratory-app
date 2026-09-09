@@ -92,9 +92,9 @@ const ApproveLabResultsModal: React.FC<ApproveLabResultsModal> = ({ order, close
   };
 
   return (
-    <div>
+    <div className={styles.modalContainer}>
       <ModalHeader closeModal={closeModal} title={t('approveLabResults', 'Approve Lab Results')} />
-      <ModalBody>
+      <ModalBody className={styles.modalBody}>
         <p>
           {t(
             'approveResultsConfirmationText',
