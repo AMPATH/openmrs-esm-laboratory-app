@@ -1,5 +1,15 @@
+.modalContainer {
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+}
+
+.modalBody {
+  overflow-y: auto;
+}
+
 .resultsContainer {
-  max-height: 500px;
+  max-height: 40vh;
   overflow-y: auto;
   overflow-x: hidden;
   border: 1px solid #e0e0e0;
