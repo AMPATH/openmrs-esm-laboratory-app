@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ExtensionSlot, launchWorkspace, useConfig, type Order } from '@openmrs/esm-framework';
+import { ExtensionSlot, launchWorkspace2, useConfig, type Order } from '@openmrs/esm-framework';
 import { type Config } from '../../config-schema';
 import { type BillStatus } from '../../types';
 
@@ -20,8 +20,8 @@ const GenerateBillRequestAction: React.FC<GenerateBillRequestActionMenuProps> = 
   const { t } = useTranslation();
   const { laboratoryServiceTypedUuid } = useConfig<Config>();
 
-  const launchBillWorkspace = () => {
-    launchWorkspace('create-order-bill-form-workspace', {
+  const launchBillWorkspace = async () => {
+    await launchWorkspace2('create-order-bill-form-workspace', {
       workspaceTitle: t('createOrderBill', 'Create order bill form'),
       order,
       quantity: 1,
