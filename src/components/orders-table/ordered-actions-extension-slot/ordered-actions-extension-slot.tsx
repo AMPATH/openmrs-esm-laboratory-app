@@ -1,6 +1,6 @@
 import { ExtensionSlot, useConfig } from '@openmrs/esm-framework';
 import { type BillInvoice, type BillStatus, type Order } from '../../../types';
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import { useInvalidateBills, useInvalidateOrderBill, useOdooBills, useOrderBill } from '../../../bill/bill.resource';
 import { type Config } from '../../../config-schema';
 import { InlineLoading } from '@carbon/react';
@@ -22,7 +22,6 @@ const OrderedActionsExtensionSlot: React.FC<OrderedActionsExtensionSlotProps> = 
   preauthRequests,
   isLoadingPreauthRequests,
 }) => {
-  const [status, setStatus] = useState<BillStatus>('BLANK');
   const invalidateBills = useInvalidateBills(order?.patient?.uuid);
   const invalidateOrderBill = useInvalidateOrderBill(order?.orderNumber);
   const { enableOdooBilling, blockedPaymentModes } = useConfig<Config>();
@@ -34,60 +33,45 @@ const OrderedActionsExtensionSlot: React.FC<OrderedActionsExtensionSlotProps> = 
     invalidateOrderBill();
   };
 
-  useEffect(() => {
+  const status = useMemo<BillStatus>(() => {
     if (!enableOdooBilling) {
-      if (!isLoading && !isLoadingOrderBill && !isLoadingPreauthRequests && orderBill && bills) {
-        const billUuid = orderBill?.bill_uuid;
-        const lineItemUuid = orderBill?.line_item_uuid;
-        const bill = bills.find((b) => b.uuid === billUuid);
-        const lineItem = bill?.lineItems?.find((i) => i.uuid === lineItemUuid);
-        if (lineItem) {
-          if (!blockedPaymentModes.includes(lineItem.priceName.toUpperCase())) {
-            if (!orderBill.consent_token) {
-              setStatus('AWAITING CLAIM VISIT');
-              return;
-            }
-            if (orderBill.requires_preauth) {
-              if (preauthRequests && preauthRequests.length) {
-                const intervention = preauthRequests.find((r) => r.interventionCode === orderBill.intervention_code);
-                if (intervention) {
-                  if (intervention.status?.trim()?.toUpperCase() === 'ACTIVE') {
-                    setStatus('PENDING PREAUTHORIZATION');
-                  }
-                  if (intervention.status?.trim()?.toUpperCase() === 'FINALISED') {
-                    setStatus('PAID');
-                  }
-                  if (intervention.status?.trim()?.toUpperCase() === 'REJECTED') {
-                    setStatus('PREAUTHORIZATION REJECTED');
-                  }
-                } else {
-                  setStatus('NEEDS PREAUTHORIZATION');
-                }
-              } else {
-                setStatus('NEEDS PREAUTHORIZATION');
-              }
-            } else {
-              setStatus('PAID');
-            }
-          } else {
-            setStatus(lineItem?.status as BillStatus);
-          }
-        } else {
-          setStatus('BLANK');
-        }
+      if (isLoading || isLoadingOrderBill || isLoadingPreauthRequests || !orderBill || !bills) {
+        return 'BLANK';
       }
-    } else {
-      if (odooBills && odooBills.orders && odooBills.orders[0].order_lines && odooBills.orders[0].order_lines.length) {
-        const currentOrder = odooBills.orders[0].order_lines.find((o) => o.openmrs_order_id === order?.uuid);
-        if (currentOrder) {
-          if (currentOrder.billing_status.toUpperCase() === 'PAID') {
-            setStatus('PAID');
-          } else {
-            setStatus('PENDING');
-          }
-        }
+      const bill = bills.find((b) => b.uuid === orderBill.bill_uuid);
+      const lineItem = bill?.lineItems?.find((i) => i.uuid === orderBill.line_item_uuid);
+      if (!lineItem) {
+        return 'BLANK';
+      }
+      if (blockedPaymentModes.includes(lineItem.priceName.toUpperCase())) {
+        return lineItem.status as BillStatus;
+      }
+      if (!orderBill.consent_token) {
+        return 'AWAITING CLAIM VISIT';
+      }
+      if (!orderBill.requires_preauth) {
+        return 'PAID';
+      }
+      const intervention = preauthRequests?.find((r) => r.interventionCode === orderBill.intervention_code);
+      if (!intervention) {
+        return 'NEEDS PREAUTHORIZATION';
+      }
+      switch (intervention.status?.trim()?.toUpperCase()) {
+        case 'ACTIVE':
+          return 'PENDING PREAUTHORIZATION';
+        case 'FINALISED':
+          return 'PAID';
+        case 'REJECTED':
+          return 'PREAUTHORIZATION REJECTED';
+        default:
+          return 'NEEDS PREAUTHORIZATION';
       }
     }
+    const currentOrder = odooBills?.orders?.[0]?.order_lines?.find((o) => o.openmrs_order_id === order?.uuid);
+    if (!currentOrder) {
+      return 'BLANK';
+    }
+    return currentOrder.billing_status.toUpperCase() === 'PAID' ? 'PAID' : 'PENDING';
   }, [
     order,
     isLoading,
@@ -101,7 +85,7 @@ const OrderedActionsExtensionSlot: React.FC<OrderedActionsExtensionSlotProps> = 
     isLoadingPreauthRequests,
   ]);
 
-  if (isLoadingOdooBills || isLoading || isLoadingOrderBill) {
+  if (isLoadingOdooBills || isLoading || isLoadingOrderBill || isLoadingPreauthRequests) {
     return <InlineLoading />;
   }
 
