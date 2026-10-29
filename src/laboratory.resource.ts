@@ -9,7 +9,6 @@ import {
   useConfig,
   useSession,
   type FetchResponse,
-  showSnackbar,
 } from '@openmrs/esm-framework';
 import type {
   DateFilterContext,
@@ -23,6 +22,7 @@ import type {
 } from './types';
 import { type Config } from './config-schema';
 import { getEtlBaseUrl } from './utils/utils';
+import { getResultObservationUuids } from './lab-results/observation-status.utils';
 
 const useLabOrdersDefaultParams: UseLabOrdersParams = {
   status: null,
@@ -171,7 +171,8 @@ const labEncounterRepresentation =
 const labConceptRepresentation =
   'custom:(uuid,display,name,datatype,set,answers,hiNormal,hiAbsolute,hiCritical,lowNormal,lowAbsolute,lowCritical,units,allowDecimal,' +
   'setMembers:(uuid,display,answers,datatype,hiNormal,hiAbsolute,hiCritical,lowNormal,lowAbsolute,lowCritical,units,allowDecimal,set,setMembers:(uuid)))';
-const conceptObsRepresentation = 'custom:(uuid,display,concept:(uuid,display),groupMembers,value)';
+const conceptObsRepresentation =
+  'custom:(uuid,display,concept:(uuid,display),groupMembers:(uuid,display,concept:(uuid,display),value,groupMembers:(uuid,display,concept:(uuid,display),value,groupMembers:(uuid,display,concept:(uuid,display),value))),value)';
 
 export function useLabEncounter(encounterUuid: string) {
   const apiUrl = `${restBaseUrl}/encounter/${encounterUuid}?v=${labEncounterRepresentation}`;
@@ -446,47 +447,38 @@ export async function updateObservationAndOrder(
   observationStatus: ObservationStatus,
   fulfillerStatus: FulfillerStatus,
   abortController: AbortController,
-  values,
   completeLabResults: Array<any>,
 ) {
-  // const { completeLabResults, values, mutateResults } = useMappedLabConcepts(order);
+  if (completeLabResults.length === 0) {
+    throw new Error('No saved lab observations were found to approve');
+  }
 
-  const updateTasks = Object.entries(values)
-    .filter(([, value]) => value !== undefined && value !== null && value !== '')
-    .map(([conceptUuid, value]) => {
-      let obs = completeLabResults.find((r) => r.concept.uuid === conceptUuid);
-      if (!obs) {
-        for (const result of completeLabResults) {
-          obs = result.groupMembers?.find((m) => m.concept.uuid === conceptUuid);
-          if (obs) break;
-        }
-      }
-      const status = observationStatus;
-      return updateObservation(obs?.uuid, { value, status });
-    });
+  const observationUuids = getResultObservationUuids(completeLabResults);
+  if (observationUuids.length === 0) {
+    throw new Error('No result-bearing observations were found to approve');
+  }
+
+  const updateTasks = observationUuids.map((observationUuid) =>
+    updateObservation(observationUuid, { status: observationStatus }),
+  );
   const updateResults = await Promise.allSettled(updateTasks);
-  const failedObsconceptUuids = updateResults.reduce((prev, curr, index) => {
-    if (curr.status === 'rejected') {
-      return [...prev, Object.keys(values).at(index)];
-    }
-    return prev;
-  }, []);
+  const failedUpdates = updateResults.flatMap((result, index) =>
+    result.status === 'rejected' ? [`${observationUuids[index]}: ${getErrorMessage(result.reason)}`] : [],
+  );
+
+  if (failedUpdates.length > 0) {
+    throw new Error(`Could not finalize result observation(s): ${failedUpdates.join('; ')}`);
+  }
 
   await setFulfillerStatus(order.uuid, fulfillerStatus, abortController);
+}
 
-  // mutateResults();
-
-  const showNotification = (kind: 'error' | 'success', message: string) => {
-    showSnackbar({
-      title: kind === 'success' ? 'Save lab results' : 'Error saving lab results',
-      kind: kind,
-      subtitle: message,
-    });
-  };
-
-  if (failedObsconceptUuids.length) {
-    showNotification('error', 'Could not save obs with concept uuids ' + failedObsconceptUuids.join(', '));
-  } else {
-    showNotification('success', 'Lab results have been successfully updated');
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
   }
+  if (error && typeof error === 'object' && 'message' in error) {
+    return String(error.message);
+  }
+  return String(error);
 }

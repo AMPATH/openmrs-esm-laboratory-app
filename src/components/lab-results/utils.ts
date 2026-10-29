@@ -50,11 +50,7 @@ export function getConceptUuids(concept: LabOrderConcept | undefined): Array<str
   if (!concept) {
     return [];
   }
-  const uuids = [concept.uuid];
-  if (concept.setMembers) {
-    concept.setMembers.forEach((member) => uuids.push(member.uuid));
-  }
-  return uuids;
+  return [concept.uuid, ...(concept.setMembers ?? []).flatMap((member) => getConceptUuids(member))];
 }
 
 export interface InterpretedResult {
@@ -74,10 +70,10 @@ export function interpretObservation(obs: Observation, ranges: ReferenceRanges):
 }
 
 export const getObservationDisplayValue = (value: ObservationValue): string => {
-  if (!value) return '--';
+  if (value === null || value === undefined || value === '') return '--';
   if (typeof value === 'string') return value;
   if (typeof value === 'number') return value.toString();
-  if (value && typeof value === 'object' && 'display' in value) return value.display;
+  if (value && typeof value === 'object' && 'display' in value) return value.display ?? '--';
   return '--';
 };
 

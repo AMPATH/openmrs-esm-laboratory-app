@@ -1,21 +1,18 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, ModalBody, ModalFooter, ModalHeader } from '@carbon/react';
 import {
-  type Config,
   ExtensionSlot,
   showNotification,
   showSnackbar,
   useAbortController,
-  useConfig,
   type Order,
   showModal,
 } from '@openmrs/esm-framework';
 import { useTranslation } from 'react-i18next';
 import {
-  setFulfillerStatus,
   updateObservationAndOrder,
+  useCompletedLabResultsArray,
   useInvalidateLabOrders,
-  useMappedLabConcepts,
 } from '../../laboratory.resource';
 import styles from './approval-lab-results-modal.scss';
 
@@ -29,56 +26,40 @@ const ApproveLabResultsModal: React.FC<ApproveLabResultsModal> = ({ order, close
   const [isSubmitting, setIsSubmitting] = useState(false);
   const abortController = useAbortController();
   const invalidateLabOrders = useInvalidateLabOrders();
-  const { laboratoryOrderTypeUuid } = useConfig<Config>();
-  const { completeLabResults, values, mutateResults } = useMappedLabConcepts(order);
+  const { completeLabResults, isLoading } = useCompletedLabResultsArray(order);
 
-  const handleApproval = () => {
-    setIsSubmitting(true);
-    if (completeLabResults && completeLabResults.length > 0) {
-      updateObservationAndOrder(order, 'FINAL', 'COMPLETED', abortController, values, completeLabResults)
-        .then(() => {
-          invalidateLabOrders();
-          setIsSubmitting(false);
-          closeModal();
-          showSnackbar({
-            isLowContrast: true,
-            title: t('resultsApproved', 'Results Approved'),
-            kind: 'success',
-            subtitle: t('labResultsApprovedSuccessfully', 'Lab results have been successfully approved and finalized'),
-          });
-        })
-        .catch((error) => {
-          setIsSubmitting(false);
-          showNotification({
-            title: t('errorApprovingResults', 'Error approving results'),
-            kind: 'error',
-            critical: true,
-            description: error?.message,
-          });
-        });
+  const handleApproval = async () => {
+    if (isLoading || completeLabResults.length === 0) {
+      showNotification({
+        title: t('cannotApproveResults', 'Cannot approve results'),
+        kind: 'error',
+        critical: true,
+        description: t('noSavedResultsToApprove', 'No saved lab results are available to approve.'),
+      });
+      return;
     }
-    // setFulfillerStatus(order.uuid, 'COMPLETED', abortController).then(
-    //   () => {
-    //     // invalidateLabOrders();
-    //     setIsSubmitting(false);
-    //     closeModal();
-    //     showSnackbar({
-    //       isLowContrast: true,
-    //       title: t('resultsApproved', 'Results Approved'),
-    //       kind: 'success',
-    //       subtitle: t('labResultsApprovedSuccessfully', 'Lab results have been successfully approved and finalized'),
-    //     });
-    //   },
-    //   (error) => {
-    //     setIsSubmitting(false);
-    //     showNotification({
-    //       title: t('errorApprovingResults', 'Error approving results'),
-    //       kind: 'error',
-    //       critical: true,
-    //       description: error?.message,
-    //     });
-    //   },
-    // );
+
+    setIsSubmitting(true);
+    try {
+      await updateObservationAndOrder(order, 'FINAL', 'COMPLETED', abortController, completeLabResults);
+      invalidateLabOrders();
+      closeModal();
+      showSnackbar({
+        isLowContrast: true,
+        title: t('resultsApproved', 'Results Approved'),
+        kind: 'success',
+        subtitle: t('labResultsApprovedSuccessfully', 'Lab results have been successfully approved and finalized'),
+      });
+    } catch (error) {
+      showNotification({
+        title: t('errorApprovingResults', 'Error approving results'),
+        kind: 'error',
+        critical: true,
+        description: error instanceof Error ? error.message : String(error),
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleReject = () => {
@@ -109,7 +90,11 @@ const ApproveLabResultsModal: React.FC<ApproveLabResultsModal> = ({ order, close
         <Button kind="danger" onClick={handleReject}>
           {t('rejectLabResults', 'Reject lab results')}
         </Button>
-        <Button type="submit" onClick={handleApproval} disabled={isSubmitting}>
+        <Button
+          type="submit"
+          onClick={handleApproval}
+          disabled={isSubmitting || isLoading || completeLabResults.length === 0}
+        >
           {t('approveResults', 'Approve Results')}
         </Button>
       </ModalFooter>
