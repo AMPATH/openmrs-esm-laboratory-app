@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Button } from '@carbon/react';
 import { useTranslation } from 'react-i18next';
-import { mutate } from 'swr';
-import { AddIcon, launchWorkspace2, restBaseUrl, useAbortController, useConfig } from '@openmrs/esm-framework';
+import { AddIcon, launchWorkspace2 } from '@openmrs/esm-framework';
 import { type Order } from '@openmrs/esm-framework';
-import { type Config } from '../../config-schema';
 import styles from './actions.scss';
-import { updateObservationAndOrder, useMappedLabConcepts } from '../../laboratory.resource';
 
 interface AddLabRequestResultsActionProps {
   order: Order;

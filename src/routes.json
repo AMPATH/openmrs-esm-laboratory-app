@@ -181,7 +181,7 @@
   "workspaces2": [
     {
       "name": "lab-app-test-results-form-workspace",
-      "component": "@openmrs/esm-patient-orders-app#exportedTestResultsFormWorkspace",
+      "component": "labResultsFormWorkspace",
       "window": "labs-app-test-results-window"
     },
     {
