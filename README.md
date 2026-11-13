@@ -30,6 +30,26 @@ The module supports the following configuration options:
 | `enableReviewingLabResultsBeforeApproval` | `boolean` | `false` | When enabled, lab results are submitted for review before being approved and finalized |
 | `filterByCurrentLocation` | `boolean` | `false` | Enable filtering lab requests by current location |
 
+### Medical supply order encounter type
+
+The medical supply order basket uses the patient orders app to create an encounter. Configure its
+`orderEncounterType` under `@openmrs/esm-patient-orders-app` in the O3 runtime configuration, not under
+the laboratory app. The UUID must refer to an active encounter type on the target OpenMRS server.
+For example, AMPATH's ORDER encounter type is configured as:
+
+```json
+{
+	"@openmrs/esm-patient-orders-app": {
+		"orderEncounterType": "d8e0f981-62e0-4c2a-b3ca-890c51afc350"
+	}
+}
+```
+
+Merge this setting into the existing patient orders configuration. Verify the UUID on the target server
+using `GET /ws/rest/v1/encountertype/{uuid}` before applying it; other installations can use a different
+UUID. If the server reports that the encounter type is required even though the request includes one,
+check that the configured UUID exists and is not retired, then reload O3 after updating its configuration.
+
 ## Getting Started
 
 ```sh

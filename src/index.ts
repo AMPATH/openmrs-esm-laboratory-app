@@ -107,6 +107,11 @@ export const addLabRequestResultsAction = getAsyncLifecycle(
   options,
 );
 
+export const addMedicalSupplyAction = getAsyncLifecycle(
+  () => import('./lab-tabs/actions/add-medical-supply-action.component'),
+  options,
+);
+
 export const pickupLabRequestAction = getAsyncLifecycle(
   () => import('./lab-tabs/actions/pickup-lab-request-action.component'),
   options,

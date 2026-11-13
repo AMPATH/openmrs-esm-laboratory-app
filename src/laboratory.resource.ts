@@ -103,6 +103,97 @@ export function setFulfillerStatus(orderId: string, status: FulfillerStatus, abo
   });
 }
 
+export type RetestOrder = Partial<Order> & {
+  uuid: string;
+  encounter?: { uuid?: string; visit?: { uuid: string } };
+};
+
+const retestOrderRepresentation =
+  'custom:(uuid,orderNumber,patient:(uuid),concept:(uuid),action,careSetting:(uuid),previousOrder,dateActivated,encounter:(uuid,visit:(uuid)),orderer:(uuid),urgency,commentToFulfiller,fulfillerStatus)';
+
+export const usePatientOrders = (order: Order) => {
+  const { hivAutoRetestConceptUuids } = useConfig<Config>();
+  const conceptUuids = hivAutoRetestConceptUuids?.join(',');
+  const encounterUuid = order?.encounter?.uuid;
+  const patientUuid = order?.patient?.uuid;
+  const { data: encounters, isLoading: isLoadingEncounters } = useSWR<{
+    data: {
+      uuid: string;
+      visit?: { uuid: string };
+    };
+  }>(encounterUuid ? `${restBaseUrl}/encounter/${encounterUuid}?v=custom:(uuid,visit:(uuid))` : null, openmrsFetch);
+
+  const visitUuid = encounters?.data?.visit?.uuid;
+  const { data: orders, isLoading: isLoadingOrders } = useSWR<{
+    data: {
+      results: Array<RetestOrder>;
+    };
+  }>(
+    patientUuid && visitUuid && conceptUuids
+      ? `${restBaseUrl}/order?patient=${patientUuid}&concept=${conceptUuids}&v=${retestOrderRepresentation}`
+      : null,
+    openmrsFetch,
+  );
+
+  const filteredOrders = orders?.data?.results?.filter((patientOrder) => {
+    const patientOrderEncounter = patientOrder.encounter as RetestOrder['encounter'];
+    return patientOrderEncounter?.visit?.uuid === visitUuid;
+  });
+
+  return {
+    patientOrders: filteredOrders,
+    isLoading: isLoadingEncounters || Boolean(visitUuid && isLoadingOrders),
+  };
+};
+
+export async function createOrResumeHivRetest(
+  originalOrder: Order,
+  visitOrders: Array<RetestOrder>,
+  laboratoryOrderTypeUuid: string,
+  abortController: AbortController,
+): Promise<void> {
+  const marker = `[AUTO-HIV-RETEST originalOrder=${originalOrder.uuid}]`;
+  const existingRetest = visitOrders.find((candidate) => candidate.commentToFulfiller?.includes(marker));
+  let retest = existingRetest;
+
+  if (!retest) {
+    const encounter = originalOrder.encounter as { uuid: string } | undefined;
+    if (
+      !encounter?.uuid ||
+      !originalOrder.patient?.uuid ||
+      !originalOrder.concept?.uuid ||
+      !originalOrder.careSetting?.uuid
+    ) {
+      throw new Error('The original order is missing details required to create a retest.');
+    }
+
+    const response = await openmrsFetch<RetestOrder>(`${restBaseUrl}/order`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      signal: abortController.signal,
+      body: {
+        orderType: laboratoryOrderTypeUuid,
+        type: 'testorder',
+        action: 'NEW',
+        urgency: originalOrder.urgency ?? 'ROUTINE',
+        careSetting: originalOrder.careSetting.uuid,
+        encounter: encounter.uuid,
+        patient: originalOrder.patient.uuid,
+        concept: originalOrder.concept.uuid,
+        orderer: originalOrder.orderer?.uuid,
+        commentToFulfiller: marker,
+        instructions: marker,
+        fulfillerStatus: 'IN_PROGRESS',
+      },
+    });
+    retest = response.data;
+  }
+
+  if (!retest.uuid) {
+    throw new Error('The retest order was created but its identifier was not returned.');
+  }
+}
+
 export function rejectLabOrder(orderId: string, comment: string, abortController: AbortController) {
   return openmrsFetch(`${restBaseUrl}/order/${orderId}/fulfillerdetails/`, {
     method: 'POST',

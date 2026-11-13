@@ -160,6 +160,11 @@
       "slot": "inprogress-tests-actions-slot"
     },
     {
+      "name": "add-medical-supply-action",
+      "component": "addMedicalSupplyAction",
+      "slot": "inprogress-tests-actions-slot"
+    },
+    {
       "name": "generate-bill-request-action",
       "component": "generateBillRequestAction",
       "slot": "tests-ordered-actions-slot"
@@ -197,6 +202,11 @@
     {
       "name": "add-test-order-basket-workspace",
       "component": "@openmrs/esm-patient-orders-app#exportedOrderBasketWorkspace",
+      "window": "add-test-order-window"
+    },
+    {
+      "name": "lab-medical-supply-add-order-workspace",
+      "component": "@openmrs/esm-patient-orders-app#exportedAddGeneralOrderWorkspace",
       "window": "add-test-order-window"
     },
     {
