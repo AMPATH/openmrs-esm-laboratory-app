@@ -21,6 +21,11 @@ export const configSchema = {
     _default: '53eb4768-1359-11df-a1f1-0026b9348838',
     _description: 'UUID for orderType',
   },
+  medicalSupplyOrderTypeUuid: {
+    _type: Type.UUID,
+    _default: '58ea528c-8f62-45f0-86a2-f7d1327b8c56',
+    _description: 'Order type UUID used by the Medical Supply order basket panel.',
+  },
   labTableColumns: {
     _type: Type.Array,
     _default: [
@@ -63,6 +68,22 @@ export const configSchema = {
     _description:
       'Enable reviewing lab results before final approval. When enabled, lab results will be submitted for review before being approved and finalized.',
   },
+  enableHivAutoRetest: {
+    _type: Type.Boolean,
+    _default: true,
+    _description: 'Automatically reorder configured HIV tests after a positive initial result is approved.',
+  },
+  hivAutoRetestConceptUuids: {
+    _type: Type.Array,
+    _default: ['a8999dfe-1350-11df-a1f1-0026b9348838'],
+    _description: 'Concept UUIDs eligible for automatic HIV retesting. Configure per environment.',
+    _elements: { _type: Type.String },
+  },
+  hivPositiveAnswerUuid: {
+    _type: Type.String,
+    _default: 'a896f3a6-1350-11df-a1f1-0026b9348838',
+    _description: 'UUID of the coded answer representing a positive HIV result. Configure per environment.',
+  },
   filterByCurrentLocation: {
     _type: Type.Boolean,
     _default: false,
@@ -92,7 +113,11 @@ export const configSchema = {
 
 export type Config = {
   enableReviewingLabResultsBeforeApproval: boolean;
+  enableHivAutoRetest: boolean;
+  hivAutoRetestConceptUuids: Array<string>;
+  hivPositiveAnswerUuid: string;
   laboratoryOrderTypeUuid: string;
+  medicalSupplyOrderTypeUuid: string;
   labTableColumns: Array<LabTableColumnName>;
   personAttributeTypeUuid: Array<string>;
   patientIdIdentifierTypeUuid: Array<string>;

@@ -15,6 +15,16 @@
   }
 }
 
+.medicalSupplyActionButton {
+  @extend .actionButton;
+}
+
+.medicalSupplyActionContainer {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+}
+
 .actionRejectButton {
   display: flex;
   align-items: center;
