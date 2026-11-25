@@ -102,7 +102,7 @@ const LabResults: React.FC<LabResultsProps> = ({ order, patientUuid: patientUuid
           iconDescription="Loading"
           description={t('loadinglabresults', 'Loading lab results') + '...'}
         />
-        <DataTableSkeleton role="progressbar" compact={!isTablet} zebra />
+        <DataTableSkeleton role="progressbar" size={isTablet ? 'lg' : 'sm'} zebra />
       </>
     );
   }

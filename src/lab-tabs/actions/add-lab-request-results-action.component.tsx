@@ -1,9 +1,11 @@
 import React from 'react';
 import { Button } from '@carbon/react';
 import { useTranslation } from 'react-i18next';
-import { AddIcon, launchWorkspace2 } from '@openmrs/esm-framework';
+import { AddIcon, launchWorkspace2, restBaseUrl, useConfig } from '@openmrs/esm-framework';
 import { type Order } from '@openmrs/esm-framework';
 import styles from './actions.scss';
+import { type Config } from '../../config-schema';
+import { mutate } from 'swr';
 
 interface AddLabRequestResultsActionProps {
   order: Order;
@@ -12,30 +14,12 @@ interface AddLabRequestResultsActionProps {
 const AddLabRequestResultsAction: React.FC<AddLabRequestResultsActionProps> = ({ order }) => {
   const { t } = useTranslation();
   const { laboratoryOrderTypeUuid } = useConfig<Config>();
-  const abortController = useAbortController();
-  const { completeLabResults, values, mutateResults } = useMappedLabConcepts(order);
-
-  useEffect(() => {
-    if (completeLabResults && completeLabResults.length > 0) {
-      updateObservationAndOrder(order, 'PRELIMINARY', 'ON_HOLD', abortController, values, completeLabResults).then(
-        (v) => {
-          invalidateLabOrders();
-        },
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [completeLabResults, order, values, abortController]);
 
   function invalidateLabOrders() {
-    mutated();
     mutate(
       (key) => typeof key === 'string' && key.startsWith(`${restBaseUrl}/order?orderTypes=${laboratoryOrderTypeUuid}`),
     );
   }
-
-  const mutated = () => {
-    mutateResults();
-  };
 
   const launchTestResultsWorkspace = () => {
     launchWorkspace2(

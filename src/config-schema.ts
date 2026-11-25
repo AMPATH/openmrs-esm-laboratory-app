@@ -53,7 +53,7 @@ export const configSchema = {
   },
   usePreferredPatientIdentifier: {
     _type: Type.Boolean,
-    _default: true,
+    _default: false,
     _description:
       "When true (default), the patientId column shows an identifier only when it is both preferred and matches patientIdIdentifierTypeUuid. When false, any identifier of the configured type is shown regardless of preferred status, with a fallback to the patient's preferred identifier of any type.",
   },

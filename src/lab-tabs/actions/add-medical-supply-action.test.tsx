@@ -1,4 +1,5 @@
 import React from 'react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { launchWorkspace2, openmrsFetch, showNotification, useConfig, type Order } from '@openmrs/esm-framework';
@@ -10,13 +11,13 @@ const mockOrder = {
 
 describe('AddMedicalSupplyAction', () => {
   beforeEach(() => {
-    jest.mocked(useConfig).mockReturnValue({ medicalSupplyOrderTypeUuid: 'medical-supply-type' });
+    vi.mocked(useConfig).mockReturnValue({ medicalSupplyOrderTypeUuid: 'medical-supply-type' });
   });
 
   it('passes the patient and active visit to the order basket group', async () => {
     const visit = { uuid: 'visit-uuid' };
-    jest.mocked(openmrsFetch).mockResolvedValue({ data: { results: [visit] } } as any);
-    jest.mocked(launchWorkspace2).mockResolvedValue(true);
+    vi.mocked(openmrsFetch).mockResolvedValue({ data: { results: [visit] } } as any);
+    vi.mocked(launchWorkspace2).mockResolvedValue(true);
 
     render(<AddMedicalSupplyAction order={mockOrder} />);
     await userEvent.setup().click(screen.getByRole('button', { name: /add medical supply/i }));
@@ -36,7 +37,7 @@ describe('AddMedicalSupplyAction', () => {
   });
 
   it('does not open the basket without an active visit', async () => {
-    jest.mocked(openmrsFetch).mockResolvedValue({ data: { results: [] } } as any);
+    vi.mocked(openmrsFetch).mockResolvedValue({ data: { results: [] } } as any);
 
     render(<AddMedicalSupplyAction order={mockOrder} />);
     await userEvent.setup().click(screen.getByRole('button', { name: /add medical supply/i }));

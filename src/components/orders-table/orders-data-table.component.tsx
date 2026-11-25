@@ -31,10 +31,7 @@ import { type Config } from '../../config-schema';
 import { useLabOrders, useQueueEntries } from '../../laboratory.resource';
 import { OrdersDateRangePicker } from './orders-date-range-picker.component';
 import ListOrderDetails from './list-order-details.component';
-import { useLabOrders } from '../../laboratory.resource';
 import { urgencyTagType, formatUrgencyLabel, urgencyPriority, getPatientIdentifier } from '../../utils';
-import type { FulfillerStatus, FlattenedOrder, Order } from '../../types';
-import { type Config } from '../../config-schema';
 import styles from './orders-data-table.scss';
 import PriorityTag from './priority-tag.component';
 
@@ -120,7 +117,8 @@ const OrdersDataTable: React.FC<OrdersDataTableProps> = (props) => {
   const { t } = useTranslation();
   const [filter, setFilter] = useState<FulfillerStatus>(null);
   const [searchString, setSearchString] = useState('');
-  const { labTableColumns, patientIdIdentifierTypeUuid, personAttributeTypeUuid, usePreferredPatientIdentifier } = useConfig<Config>();
+  const { labTableColumns, patientIdIdentifierTypeUuid, personAttributeTypeUuid, usePreferredPatientIdentifier } =
+    useConfig<Config>();
   const { queueEntries } = useQueueEntries();
 
   const { labOrders, isLoading, isError, mutate } = useLabOrders({
@@ -194,7 +192,14 @@ const OrdersDataTable: React.FC<OrdersDataTableProps> = (props) => {
     } else {
       return [];
     }
-  }, [flattenedLabOrders, labOrders, patientIdIdentifierTypeUuid, personAttributeTypeUuid, usePreferredPatientIdentifier, queueEntries]);
+  }, [
+    flattenedLabOrders,
+    labOrders,
+    patientIdIdentifierTypeUuid,
+    personAttributeTypeUuid,
+    usePreferredPatientIdentifier,
+    queueEntries,
+  ]);
 
   const searchResults = useMemo(() => {
     if (searchString && searchString.trim() !== '') {
@@ -386,6 +391,7 @@ const OrdersDataTable: React.FC<OrdersDataTableProps> = (props) => {
                         <TableExpandedRow colSpan={headers.length + 2}>
                           <ListOrderDetails
                             groupedOrders={groupedOrdersByPatient.find((item) => item.patientUuid === row.id)}
+                            patientUuid={row.id}
                           />
                         </TableExpandedRow>
                       ) : (

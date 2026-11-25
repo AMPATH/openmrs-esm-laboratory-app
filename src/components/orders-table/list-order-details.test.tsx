@@ -1,7 +1,7 @@
 import React from 'react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import type { Order } from '@openmrs/esm-framework';
+import { useVisit, type Order } from '@openmrs/esm-framework';
 import { type GroupedOrders } from '../../types';
 import ListOrderDetails from './list-order-details.component';
 
@@ -30,17 +30,20 @@ describe('ListOrderDetails — order reason', () => {
     render(
       <ListOrderDetails
         groupedOrders={makeGroupedOrders({ orderReason: { uuid: 'concept-uuid-1', display: 'Fever screening' } })}
+        patientUuid="patient-uuid-1"
       />,
     );
 
     expect(screen.getByText('Order reason:')).toBeInTheDocument();
     expect(screen.getByText('Fever screening')).toBeInTheDocument();
+    expect(vi.mocked(useVisit)).toHaveBeenCalledWith('patient-uuid-1');
   });
 
   it('shows the non-coded order reason when only orderReasonNonCoded is set', () => {
     render(
       <ListOrderDetails
         groupedOrders={makeGroupedOrders({ orderReasonNonCoded: 'Patient requested routine check' })}
+        patientUuid="patient-uuid-1"
       />,
     );
 
@@ -48,7 +51,7 @@ describe('ListOrderDetails — order reason', () => {
   });
 
   it('shows "--" when neither orderReason nor orderReasonNonCoded is set', () => {
-    render(<ListOrderDetails groupedOrders={makeGroupedOrders()} />);
+    render(<ListOrderDetails groupedOrders={makeGroupedOrders()} patientUuid="patient-uuid-1" />);
 
     expect(screen.getByText('Order reason:')).toBeInTheDocument();
     expect(screen.getByText('--')).toBeInTheDocument();
@@ -61,6 +64,7 @@ describe('ListOrderDetails — order reason', () => {
           orderReason: { uuid: 'concept-uuid-2', display: 'Malaria screening' },
           orderReasonNonCoded: 'Should not appear',
         })}
+        patientUuid="patient-uuid-1"
       />,
     );
 

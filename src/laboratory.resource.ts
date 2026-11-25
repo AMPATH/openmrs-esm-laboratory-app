@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import dayjs from 'dayjs';
-import useSWR, { mutate } from 'swr';
+import useSWR, { mutate, useSWRConfig } from 'swr';
 import {
   openmrsFetch,
   type Order,
@@ -80,7 +80,7 @@ export function useLabOrders(params: Partial<UseLabOrdersParams> = useLabOrdersD
 
   const { data, error, mutate, isLoading, isValidating } = useSWR<Array<Order>>(`${url}`, fetchAllOrders);
 
-  const filteredOrders = data?.filter((order) => !unpickedOrdersOnly || isOrderAwaitingPickup(order));
+  let filteredOrders = data?.filter((order) => !unpickedOrdersOnly || isOrderAwaitingPickup(order));
 
   if (filterByCurrentLocation) {
     filteredOrders = filteredOrders?.filter((order) => order.encounter?.location?.uuid === sessionLocation?.uuid);

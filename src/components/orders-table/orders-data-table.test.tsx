@@ -2,13 +2,14 @@ import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { useConfig, getDefaultsFromConfigSchema, type Order, type Patient } from '@openmrs/esm-framework';
+import { useConfig, useVisit, getDefaultsFromConfigSchema, type Order, type Patient } from '@openmrs/esm-framework';
 import { configSchema, type Config } from '../../config-schema';
 import { useLabOrders } from '../../laboratory.resource';
 import OrdersDataTable from './orders-data-table.component';
 
 vi.mock('../../laboratory.resource', () => ({
   useLabOrders: vi.fn(),
+  useQueueEntries: vi.fn(() => ({ queueEntries: [] })),
 }));
 
 const mockUseConfig = vi.mocked(useConfig<Config>);
@@ -178,6 +179,7 @@ describe('OrdersDataTable', () => {
 
     const user = userEvent.setup();
     await user.click(within(row1).getByLabelText('Expand current row'));
+    expect(vi.mocked(useVisit)).toHaveBeenCalledWith('patient-uuid-1');
 
     const orderDetailsTables = within(table).getAllByRole('table');
     expect(orderDetailsTables).toHaveLength(2);
@@ -422,7 +424,7 @@ describe('patient identifier column', () => {
   const baseConfig: Config = {
     ...(getDefaultsFromConfigSchema(configSchema) as Config),
     labTableColumns: ['patientId', 'age', 'totalOrders'],
-    patientIdIdentifierTypeUuid: TYPE_UUID,
+    patientIdIdentifierTypeUuid: [TYPE_UUID],
   };
 
   const makeOrder = (identifiers: Patient['identifiers']) => ({
